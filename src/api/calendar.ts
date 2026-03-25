@@ -50,7 +50,7 @@ route("GET", "/cal/:token", async (req, params) => {
   }
 
   const forecast = await getForecast(sub.lat, sub.lon, activity.times);
-  let scores = scoreForecast(activity, forecast);
+  let scores = scoreForecast(activity, forecast, { lat: sub.lat, lon: sub.lon });
 
   const url = new URL(req.url);
   const cutoffParam = url.searchParams.get("cutoff");

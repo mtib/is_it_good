@@ -1,13 +1,13 @@
-import type { Activity, DayScore, QualifierScore } from "./types";
+import type { Activity, DayScore, QualifierScore, ScoringContext } from "./types";
 import type { DailyWeather } from "../weather/types";
 
-export function scoreDay(activity: Activity, weather: DailyWeather): DayScore {
+export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: ScoringContext): DayScore {
   let weightedSum = 0;
   let totalWeight = 0;
   const qualifiers: QualifierScore[] = [];
 
   for (const q of activity.qualifiers) {
-    const value = q.extract(weather);
+    const value = q.extract(weather, ctx);
     const score = Math.max(0, Math.min(10, q.scoreFn(value)));
 
     qualifiers.push({
@@ -42,6 +42,6 @@ function getLabel(score: number): string {
   return "Great";
 }
 
-export function scoreForecast(activity: Activity, forecast: DailyWeather[]): DayScore[] {
-  return forecast.map((w) => scoreDay(activity, w));
+export function scoreForecast(activity: Activity, forecast: DailyWeather[], ctx?: ScoringContext): DayScore[] {
+  return forecast.map((w) => scoreDay(activity, w, ctx));
 }

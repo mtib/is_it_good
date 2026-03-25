@@ -13,4 +13,7 @@ export interface DailyWeather {
   weather_main: string; // e.g. "Clear", "Rain"
   weather_icon: string;
   source: string; // provider id
+  kp_max?: number; // geomagnetic Kp index (0-9), from NOAA SWPC
+  kp_avg?: number;
+  g_scale?: string | null; // NOAA G-scale (G1-G5)
 }

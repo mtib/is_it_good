@@ -23,7 +23,7 @@ route("GET", "/api/forecast", async (req) => {
     return jsonResponse({ error: "No forecast data available" }, 503);
   }
 
-  const scores = scoreForecast(activity, forecast);
+  const scores = scoreForecast(activity, forecast, { lat, lon });
 
   return jsonResponse({
     location: { lat, lon },

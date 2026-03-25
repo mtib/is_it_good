@@ -1,4 +1,5 @@
 import type { Activity } from "./types";
+import { auroraVisibilityScore } from "../weather/aurora";
 
 /** Piecewise linear interpolation from breakpoints [[x, y], ...] */
 function piecewise(points: [number, number][]): (value: number) => number {
@@ -209,4 +210,57 @@ export const stargazing: Activity = {
   ],
 };
 
-export const activities: Record<string, Activity> = { biking, drone, running, stargazing };
+export const aurora: Activity = {
+  id: "aurora",
+  name: "Aurora Borealis",
+  times: new Set(["nighttime"]),
+  qualifiers: [
+    {
+      id: "kp_aurora",
+      name: "Aurora Likelihood",
+      unit: "Kp",
+      weight: 8,
+      extract: (w, ctx) => {
+        const kp = w.kp_max ?? 0;
+        const lat = ctx?.lat ?? 60;
+        return auroraVisibilityScore(kp, lat);
+      },
+      // extract already returns 0-10 via auroraVisibilityScore, pass through
+      scoreFn: (v) => v,
+    },
+    {
+      id: "clouds",
+      name: "Cloud Cover",
+      unit: "%",
+      weight: 6,
+      extract: (w) => w.cloud_cover,
+      scoreFn: piecewise([[0, 10], [10, 9], [30, 6], [60, 2], [80, 0]]),
+    },
+    {
+      id: "rain",
+      name: "Precipitation",
+      unit: "mm",
+      weight: 2,
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: piecewise([[0, 10], [0.5, 5], [2, 0]]),
+    },
+    {
+      id: "visibility",
+      name: "Visibility",
+      unit: "km",
+      weight: 2,
+      extract: (w) => w.visibility,
+      scoreFn: piecewise([[0, 0], [2, 3], [5, 6], [10, 10]]),
+    },
+    {
+      id: "humidity",
+      name: "Humidity",
+      unit: "%",
+      weight: 1,
+      extract: (w) => w.humidity,
+      scoreFn: piecewise([[0, 10], [50, 10], [75, 5], [90, 2], [100, 0]]),
+    },
+  ],
+};
+
+export const activities: Record<string, Activity> = { biking, drone, running, stargazing, aurora };

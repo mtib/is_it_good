@@ -2,12 +2,17 @@ import type { DailyWeather } from "../weather/types";
 
 export type ScoreFn = (value: number) => number;
 
+export interface ScoringContext {
+  lat: number;
+  lon: number;
+}
+
 export interface Qualifier {
   id: string;
   name: string;
   unit: string;
   weight: number;
-  extract: (w: DailyWeather) => number;
+  extract: (w: DailyWeather, ctx?: ScoringContext) => number;
   scoreFn: ScoreFn;
 }
 
