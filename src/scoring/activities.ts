@@ -33,26 +33,25 @@ function piecewise(points: [number, number][]): (value: number) => number {
   };
 }
 
+const bikingRainScore = piecewise([[0, 10], [1, 7], [5, 3], [10, 0]]);
+const bikingWindScore = piecewise([[0, 10], [10, 10], [25, 4], [40, 0]]);
+
 export const biking: Activity = {
   id: "biking",
   name: "Biking",
   times: new Set(["daytime"]),
   qualifiers: [
     {
-      id: "rain",
-      name: "Rain",
-      unit: "mm",
-      weight: 3,
-      extract: (w) => w.rain_mm + w.snow_mm,
-      scoreFn: piecewise([[0, 10], [1, 7], [5, 3], [10, 0]]),
-    },
-    {
-      id: "wind",
-      name: "Wind",
-      unit: "km/h",
-      weight: 3,
-      extract: (w) => w.wind_speed,
-      scoreFn: piecewise([[0, 10], [10, 10], [25, 4], [40, 0]]),
+      id: "conditions",
+      name: "Conditions (Rain + Wind)",
+      unit: "",
+      weight: 6,
+      extract: (w) => {
+        const rain = bikingRainScore(w.rain_mm + w.snow_mm);
+        const wind = bikingWindScore(w.wind_speed);
+        return rain * wind / 10;
+      },
+      scoreFn: (v) => v,
     },
     {
       id: "temperature",
@@ -81,26 +80,25 @@ export const biking: Activity = {
   ],
 };
 
+const droneWindScore = piecewise([[0, 10], [5, 8], [12, 5], [20, 2], [30, 0]]);
+const droneRainScore = piecewise([[0, 10], [0.5, 0]]);
+
 export const drone: Activity = {
   id: "drone",
   name: "Drone Flying",
   times: new Set(["daytime"]),
   qualifiers: [
     {
-      id: "wind",
-      name: "Wind",
-      unit: "km/h",
+      id: "conditions",
+      name: "Conditions (Rain + Wind)",
+      unit: "",
       weight: 8,
-      extract: (w) => w.wind_speed,
-      scoreFn: piecewise([[0, 10], [5, 8], [12, 5], [20, 2], [30, 0]]),
-    },
-    {
-      id: "rain",
-      name: "Rain",
-      unit: "mm",
-      weight: 6,
-      extract: (w) => w.rain_mm + w.snow_mm,
-      scoreFn: piecewise([[0, 10], [0.5, 0]]),
+      extract: (w) => {
+        const wind = droneWindScore(w.wind_speed);
+        const rain = droneRainScore(w.rain_mm + w.snow_mm);
+        return wind * rain / 10;
+      },
+      scoreFn: (v) => v,
     },
     {
       id: "visibility",
