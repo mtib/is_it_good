@@ -1,0 +1,14 @@
+{
+  "name": "is_it_good",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "dev:frontend": "cd frontend && bunx vite --port 5173",
+    "build:frontend": "cd frontend && bunx vite build",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "bun-types": "^1.3.11"
+  }
+}
