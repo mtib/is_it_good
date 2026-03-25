@@ -21,6 +21,7 @@ function piecewise(points: [number, number][]): (value: number) => number {
 export const biking: Activity = {
   id: "biking",
   name: "Biking",
+  times: new Set(["daytime"]),
   qualifiers: [
     {
       id: "rain",
@@ -68,6 +69,7 @@ export const biking: Activity = {
 export const drone: Activity = {
   id: "drone",
   name: "Drone Flying",
+  times: new Set(["daytime"]),
   qualifiers: [
     {
       id: "wind",
