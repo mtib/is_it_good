@@ -26,7 +26,7 @@ export function DayCard({ day }: Props) {
   const { weekday, date } = formatDate(day.date);
 
   return (
-    <div className="day-card" onClick={() => setExpanded(!expanded)}>
+    <div className={`day-card${expanded ? " expanded" : ""}`} onClick={() => setExpanded(!expanded)}>
       <div className="day-header">
         <span className="day-weekday">{weekday}</span>
         <span className="day-date">{date}</span>

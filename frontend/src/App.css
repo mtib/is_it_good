@@ -134,6 +134,12 @@ header h1 {
   cursor: pointer;
   border: 1px solid #334155;
   transition: border-color 0.15s;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.day-card.expanded {
+  grid-column: span 2;
 }
 
 .day-card:hover {
