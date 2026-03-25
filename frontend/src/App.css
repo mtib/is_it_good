@@ -211,6 +211,50 @@ header h1 {
   border: 1px solid #334155;
 }
 
+.cutoff-controls {
+  margin-bottom: 1rem;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.toggle-row input[type="checkbox"] {
+  accent-color: #3b82f6;
+}
+
+.cutoff-options {
+  margin-top: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.cutoff-mode {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.cutoff-mode select,
+.cutoff-input {
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 0.85rem;
+}
+
+.cutoff-input {
+  width: 4rem;
+}
+
 .calendar-url-box {
   display: flex;
   align-items: center;

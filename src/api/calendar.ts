@@ -50,7 +50,20 @@ route("GET", "/cal/:token", async (req, params) => {
   }
 
   const forecast = await getForecast(sub.lat, sub.lon);
-  const scores = scoreForecast(activity, forecast);
+  let scores = scoreForecast(activity, forecast);
+
+  const url = new URL(req.url);
+  const cutoffParam = url.searchParams.get("cutoff");
+  const modeParam = url.searchParams.get("mode");
+  if (cutoffParam !== null) {
+    const cutoff = parseFloat(cutoffParam);
+    if (!isNaN(cutoff)) {
+      const mode = modeParam === "lte" ? "lte" : "gte";
+      scores = scores.filter((s) =>
+        mode === "gte" ? s.overall >= cutoff : s.overall <= cutoff
+      );
+    }
+  }
 
   const ical = generateIcal(
     activity.name,
