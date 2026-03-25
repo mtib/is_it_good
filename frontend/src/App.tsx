@@ -87,7 +87,7 @@ export function App() {
       </header>
 
       <main>
-        <LocationInput onSelect={handleSetLocation} />
+        <LocationInput onSelect={handleSetLocation} initialValue={location?.name} />
 
         {location && (
           <div className="location-display">

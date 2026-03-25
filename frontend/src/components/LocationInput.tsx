@@ -3,10 +3,11 @@ import { geocode, type GeocodeResult } from "../lib/api";
 
 interface Props {
   onSelect: (result: GeocodeResult) => void;
+  initialValue?: string;
 }
 
-export function LocationInput({ onSelect }: Props) {
-  const [query, setQuery] = useState("");
+export function LocationInput({ onSelect, initialValue }: Props) {
+  const [query, setQuery] = useState(initialValue || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
