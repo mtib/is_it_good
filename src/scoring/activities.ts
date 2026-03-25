@@ -63,12 +63,12 @@ export const biking: Activity = {
       scoreFn: piecewise([[-10, 0], [0, 3], [10, 7], [18, 10], [25, 10], [32, 6], [40, 0]]),
     },
     {
-      id: "humidity",
-      name: "Humidity",
-      unit: "%",
-      weight: 0.5,
-      extract: (w) => w.humidity,
-      scoreFn: piecewise([[0, 6], [30, 10], [60, 10], [80, 6], [100, 3]]),
+      id: "visibility",
+      name: "Visibility",
+      unit: "km",
+      weight: 1,
+      extract: (w) => w.visibility,
+      scoreFn: piecewise([[0, 0], [1, 3], [5, 7], [10, 10]]),
     },
     {
       id: "clouds",
