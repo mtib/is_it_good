@@ -18,25 +18,39 @@ interface OWM5DayEntry {
   weather: { main: string; icon: string }[];
 }
 
+/** Convert a unix timestamp to YYYY-MM-DD in a given timezone offset (seconds) */
+function toLocalDate(dt: number, tzOffsetSeconds: number): string {
+  const localMs = (dt + tzOffsetSeconds) * 1000;
+  return new Date(localMs).toISOString().slice(0, 10);
+}
+
+/** Get today's date string in a given timezone offset (seconds) */
+function localToday(tzOffsetSeconds: number): string {
+  const nowUtc = Math.floor(Date.now() / 1000);
+  return toLocalDate(nowUtc, tzOffsetSeconds);
+}
+
 export async function fetch5DayForecast(lat: number, lon: number): Promise<DailyWeather[]> {
   const rlat = roundCoord(lat);
   const rlon = roundCoord(lon);
 
-  // Check cache for all days
-  const cached = tryLoadCached("owm_5d", rlat, rlon);
-  if (cached) return cached;
-
   const url = `${OWM_BASE}/data/2.5/forecast?lat=${rlat}&lon=${rlon}&appid=${config.owmApiKey}&units=metric`;
   const res = await fetch(url);
   if (!res.ok) {
-    // Try stale cache
-    const stale = tryLoadCached("owm_5d", rlat, rlon, true);
+    // Try stale cache (use UTC offset 0 as fallback — close enough for cache keys)
+    const stale = tryLoadCached("owm_5d", rlat, rlon, 0, true);
     if (stale) return stale;
     throw new Error(`OWM 5-day API error: ${res.status}`);
   }
 
-  const json = await res.json() as { list: OWM5DayEntry[] };
-  const days = aggregate3HourlyToDaily(json.list);
+  const json = await res.json() as { city: { timezone: number }; list: OWM5DayEntry[] };
+  const tzOffset = json.city.timezone; // seconds from UTC
+
+  // Check cache using location-local dates
+  const cached = tryLoadCached("owm_5d", rlat, rlon, tzOffset);
+  if (cached) return cached;
+
+  const days = aggregate3HourlyToDaily(json.list, tzOffset);
 
   for (const day of days) {
     setCachedForecast("owm_5d", rlat, rlon, day.date, JSON.stringify(day), CACHE_TTL_5D);
@@ -49,14 +63,14 @@ export async function fetch16DayForecast(lat: number, lon: number): Promise<Dail
   const rlat = roundCoord(lat);
   const rlon = roundCoord(lon);
 
-  const cached = tryLoadCached("owm_16d", rlat, rlon);
-  if (cached) return cached;
-
+  // 16-day endpoint returns one entry per local day already, but we still
+  // need the tz offset for cache key lookups. Try fetching first.
   const url = `${OWM_BASE}/data/2.5/forecast/daily?lat=${rlat}&lon=${rlon}&cnt=16&appid=${config.owmApiKey}&units=metric`;
   const res = await fetch(url);
   if (!res.ok) return []; // Paid tier not available — degrade gracefully
 
   const json = await res.json() as {
+    city: { timezone: number };
     list: {
       dt: number;
       temp: { min: number; max: number; day: number };
@@ -70,8 +84,13 @@ export async function fetch16DayForecast(lat: number, lon: number): Promise<Dail
     }[];
   };
 
+  const tzOffset = json.city.timezone;
+
+  const cached = tryLoadCached("owm_16d", rlat, rlon, tzOffset);
+  if (cached) return cached;
+
   const days: DailyWeather[] = json.list.map((entry) => {
-    const date = new Date(entry.dt * 1000).toISOString().slice(0, 10);
+    const date = toLocalDate(entry.dt, tzOffset);
     return {
       date,
       temp_min: entry.temp.min,
@@ -101,15 +120,17 @@ function tryLoadCached(
   provider: string,
   lat: number,
   lon: number,
+  tzOffset: number,
   allowStale = false
 ): DailyWeather[] | null {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localToday(tzOffset);
   const days: DailyWeather[] = [];
 
   for (let i = 0; i < 16; i++) {
     const d = new Date();
     d.setDate(d.getDate() + i);
-    const date = d.toISOString().slice(0, 10);
+    // Use the location-local date for cache lookup
+    const date = toLocalDate(Math.floor(d.getTime() / 1000), tzOffset);
     const entry = getCachedForecast(provider, lat, lon, date);
     if (entry && (!entry.stale || allowStale)) {
       days.push(JSON.parse(entry.data));
@@ -121,11 +142,11 @@ function tryLoadCached(
   return null;
 }
 
-function aggregate3HourlyToDaily(entries: OWM5DayEntry[]): DailyWeather[] {
+function aggregate3HourlyToDaily(entries: OWM5DayEntry[], tzOffset: number): DailyWeather[] {
   const byDate = new Map<string, OWM5DayEntry[]>();
 
   for (const entry of entries) {
-    const date = new Date(entry.dt * 1000).toISOString().slice(0, 10);
+    const date = toLocalDate(entry.dt, tzOffset);
     if (!byDate.has(date)) byDate.set(date, []);
     byDate.get(date)!.push(entry);
   }
