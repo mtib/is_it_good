@@ -170,7 +170,7 @@ export const stargazing: Activity = {
       id: "clouds",
       name: "Cloud Cover",
       unit: "%",
-      weight: 5,
+      weight: 8,
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 10], [10, 9], [30, 6], [60, 2], [80, 0]]),
     },
