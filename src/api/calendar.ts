@@ -49,7 +49,7 @@ route("GET", "/cal/:token", async (req, params) => {
     return new Response("Activity not found", { status: 404 });
   }
 
-  const forecast = await getForecast(sub.lat, sub.lon);
+  const forecast = await getForecast(sub.lat, sub.lon, activity.times);
   let scores = scoreForecast(activity, forecast);
 
   const url = new URL(req.url);

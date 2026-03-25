@@ -159,4 +159,52 @@ export const running: Activity = {
   ],
 };
 
-export const activities: Record<string, Activity> = { biking, drone, running };
+export const stargazing: Activity = {
+  id: "stargazing",
+  name: "Stargazing",
+  times: new Set(["nighttime"]),
+  qualifiers: [
+    {
+      id: "clouds",
+      name: "Cloud Cover",
+      unit: "%",
+      weight: 5,
+      extract: (w) => w.cloud_cover,
+      scoreFn: piecewise([[0, 10], [10, 9], [30, 6], [60, 2], [80, 0]]),
+    },
+    {
+      id: "humidity",
+      name: "Humidity",
+      unit: "%",
+      weight: 2,
+      extract: (w) => w.humidity,
+      scoreFn: piecewise([[0, 10], [40, 10], [70, 7], [85, 3], [100, 0]]),
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 1,
+      extract: (w) => w.wind_speed,
+      scoreFn: piecewise([[0, 10], [15, 9], [30, 5], [50, 2]]),
+    },
+    {
+      id: "visibility",
+      name: "Visibility",
+      unit: "km",
+      weight: 2,
+      extract: (w) => w.visibility,
+      scoreFn: piecewise([[0, 0], [2, 3], [5, 6], [10, 10]]),
+    },
+    {
+      id: "rain",
+      name: "Rain",
+      unit: "mm",
+      weight: 2,
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: piecewise([[0, 10], [0.5, 3], [2, 0]]),
+    },
+  ],
+};
+
+export const activities: Record<string, Activity> = { biking, drone, running, stargazing };

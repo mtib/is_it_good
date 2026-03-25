@@ -1,11 +1,12 @@
 import type { DailyWeather } from "./types";
+import type { TimeOfDay } from "../scoring/types";
 import { fetch5DayForecast, fetch16DayForecast } from "./openweathermap";
 
-export async function getForecast(lat: number, lon: number): Promise<DailyWeather[]> {
+export async function getForecast(lat: number, lon: number, times?: Set<TimeOfDay>): Promise<DailyWeather[]> {
   // Fetch all available sources in parallel
   const [days5, days16] = await Promise.all([
-    fetch5DayForecast(lat, lon).catch(() => [] as DailyWeather[]),
-    fetch16DayForecast(lat, lon).catch(() => [] as DailyWeather[]),
+    fetch5DayForecast(lat, lon, times).catch(() => [] as DailyWeather[]),
+    fetch16DayForecast(lat, lon, times).catch(() => [] as DailyWeather[]),
   ]);
 
   // Merge: prefer 5-day (higher resolution) for overlapping dates, then fill with 16-day

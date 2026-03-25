@@ -18,7 +18,7 @@ route("GET", "/api/forecast", async (req) => {
     return jsonResponse({ error: `Unknown activity: ${activityId}` }, 400);
   }
 
-  const forecast = await getForecast(lat, lon);
+  const forecast = await getForecast(lat, lon, activity.times);
   if (forecast.length === 0) {
     return jsonResponse({ error: "No forecast data available" }, 503);
   }

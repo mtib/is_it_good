@@ -11,9 +11,12 @@ export interface Qualifier {
   scoreFn: ScoreFn;
 }
 
+export type TimeOfDay = "daytime" | "nighttime";
+
 export interface Activity {
   id: string;
   name: string;
+  times?: Set<TimeOfDay>;
   qualifiers: Qualifier[];
 }
 

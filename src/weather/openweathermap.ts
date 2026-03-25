@@ -2,6 +2,7 @@ import { config } from "../config";
 import { getCachedForecast, setCachedForecast } from "../db/cache";
 import { roundCoord } from "../util/geo";
 import type { DailyWeather } from "./types";
+import type { TimeOfDay } from "../scoring/types";
 
 const OWM_BASE = "https://api.openweathermap.org";
 const CACHE_TTL_5D = 3 * 3600; // 3 hours
@@ -30,36 +31,73 @@ function localToday(tzOffsetSeconds: number): string {
   return toLocalDate(nowUtc, tzOffsetSeconds);
 }
 
-export async function fetch5DayForecast(lat: number, lon: number): Promise<DailyWeather[]> {
+/** Get the local hour (0-23) for a unix timestamp in a given tz offset */
+function toLocalHour(dt: number, tzOffsetSeconds: number): number {
+  const localMs = (dt + tzOffsetSeconds) * 1000;
+  return new Date(localMs).getUTCHours();
+}
+
+function isNightHour(hour: number): boolean {
+  return hour >= 21 || hour < 6;
+}
+
+function isDayHour(hour: number): boolean {
+  return hour >= 6 && hour < 21;
+}
+
+function matchesTimes(hour: number, times?: Set<TimeOfDay>): boolean {
+  if (!times || times.size === 0) return true; // no filter = all hours
+  for (const t of times) {
+    if (t === "nighttime" && isNightHour(hour)) return true;
+    if (t === "daytime" && isDayHour(hour)) return true;
+  }
+  return false;
+}
+
+/** Whether filtered slots that fall before 6AM should be assigned to the previous calendar day */
+function shiftsToEveningDate(times?: Set<TimeOfDay>): boolean {
+  return !!times && times.has("nighttime") && !times.has("daytime");
+}
+
+function timesCacheKey(times?: Set<TimeOfDay>): string {
+  if (!times || times.size === 0) return "owm_5d";
+  return "owm_5d_" + [...times].sort().join("_");
+}
+
+export async function fetch5DayForecast(lat: number, lon: number, times?: Set<TimeOfDay>): Promise<DailyWeather[]> {
   const rlat = roundCoord(lat);
   const rlon = roundCoord(lon);
+  const cacheKey = timesCacheKey(times);
 
   const url = `${OWM_BASE}/data/2.5/forecast?lat=${rlat}&lon=${rlon}&appid=${config.owmApiKey}&units=metric`;
   const res = await fetch(url);
   if (!res.ok) {
-    // Try stale cache (use UTC offset 0 as fallback — close enough for cache keys)
-    const stale = tryLoadCached("owm_5d", rlat, rlon, 0, true);
+    const stale = tryLoadCached(cacheKey, rlat, rlon, 0, true);
     if (stale) return stale;
     throw new Error(`OWM 5-day API error: ${res.status}`);
   }
 
   const json = await res.json() as { city: { timezone: number }; list: OWM5DayEntry[] };
-  const tzOffset = json.city.timezone; // seconds from UTC
+  const tzOffset = json.city.timezone;
 
-  // Check cache using location-local dates
-  const cached = tryLoadCached("owm_5d", rlat, rlon, tzOffset);
+  const cached = tryLoadCached(cacheKey, rlat, rlon, tzOffset);
   if (cached) return cached;
 
-  const days = aggregate3HourlyToDaily(json.list, tzOffset);
+  const filtered = times && times.size > 0
+    ? json.list.filter((e) => matchesTimes(toLocalHour(e.dt, tzOffset), times))
+    : json.list;
+
+  const shiftEarly = shiftsToEveningDate(times);
+  const days = aggregate3HourlyToDaily(filtered, tzOffset, shiftEarly);
 
   for (const day of days) {
-    setCachedForecast("owm_5d", rlat, rlon, day.date, JSON.stringify(day), CACHE_TTL_5D);
+    setCachedForecast(cacheKey, rlat, rlon, day.date, JSON.stringify(day), CACHE_TTL_5D);
   }
 
   return days;
 }
 
-export async function fetch16DayForecast(lat: number, lon: number): Promise<DailyWeather[]> {
+export async function fetch16DayForecast(lat: number, lon: number, _times?: Set<TimeOfDay>): Promise<DailyWeather[]> {
   const rlat = roundCoord(lat);
   const rlon = roundCoord(lon);
 
@@ -142,11 +180,21 @@ function tryLoadCached(
   return null;
 }
 
-function aggregate3HourlyToDaily(entries: OWM5DayEntry[], tzOffset: number): DailyWeather[] {
+function aggregate3HourlyToDaily(entries: OWM5DayEntry[], tzOffset: number, shiftEarlyMorning = false): DailyWeather[] {
   const byDate = new Map<string, OWM5DayEntry[]>();
 
   for (const entry of entries) {
-    const date = toLocalDate(entry.dt, tzOffset);
+    let date = toLocalDate(entry.dt, tzOffset);
+    // When filtering to nighttime only, assign early morning slots (00:00-05:59)
+    // to the previous calendar date so they group with that evening's night
+    if (shiftEarlyMorning) {
+      const hour = toLocalHour(entry.dt, tzOffset);
+      if (hour < 6) {
+        const prev = new Date(date + "T00:00:00Z");
+        prev.setUTCDate(prev.getUTCDate() - 1);
+        date = prev.toISOString().slice(0, 10);
+      }
+    }
     if (!byDate.has(date)) byDate.set(date, []);
     byDate.get(date)!.push(entry);
   }
