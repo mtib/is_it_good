@@ -267,6 +267,7 @@ export const aurora: Activity = {
 export const hideAndSeek: Activity = {
   id: "hide_and_seek",
   name: "Hide and Seek",
+  times: new Set(["daytime"]),
   qualifiers: [
     {
       id: "rain",
@@ -280,7 +281,7 @@ export const hideAndSeek: Activity = {
       id: "wind",
       name: "Wind",
       unit: "km/h",
-      weight: 3,
+      weight: 4,
       extract: (w) => w.wind_speed,
       scoreFn: piecewise([[0, 10], [10, 10], [20, 7], [35, 3], [50, 0]]),
     },
