@@ -174,14 +174,11 @@ header h1 {
   text-align: left;
   border-top: 1px solid #334155;
   padding-top: 0.5rem;
-}
-
-.qualifier-row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.15rem 0.5rem;
   align-items: center;
   font-size: 0.75rem;
-  padding: 0.15rem 0;
 }
 
 .qualifier-name {
@@ -190,12 +187,14 @@ header h1 {
 
 .qualifier-value {
   color: #64748b;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .qualifier-score {
   font-weight: 600;
-  min-width: 3rem;
   text-align: right;
+  white-space: nowrap;
 }
 
 .calendar-link {

@@ -112,4 +112,51 @@ export const drone: Activity = {
   ],
 };
 
-export const activities: Record<string, Activity> = { biking, drone };
+export const running: Activity = {
+  id: "running",
+  name: "Running",
+  qualifiers: [
+    {
+      id: "rain",
+      name: "Rain",
+      unit: "mm",
+      weight: 2,
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: piecewise([[0, 10], [2, 6], [8, 2], [15, 0]]),
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 1.5,
+      extract: (w) => w.wind_speed,
+      scoreFn: piecewise([[0, 10], [15, 10], [30, 5], [50, 0]]),
+    },
+    {
+      id: "temperature",
+      name: "Temperature",
+      unit: "°C",
+      weight: 3,
+      extract: (w) => w.temp_avg,
+      scoreFn: piecewise([[-15, 0], [-5, 3], [5, 7], [12, 10], [20, 10], [28, 7], [35, 3], [42, 0]]),
+    },
+    {
+      id: "humidity",
+      name: "Humidity",
+      unit: "%",
+      weight: 1,
+      extract: (w) => w.humidity,
+      scoreFn: piecewise([[0, 7], [30, 10], [60, 10], [75, 6], [90, 2], [100, 0]]),
+    },
+    {
+      id: "clouds",
+      name: "Cloud Cover",
+      unit: "%",
+      weight: 0.5,
+      extract: (w) => w.cloud_cover,
+      scoreFn: piecewise([[0, 9], [40, 10], [80, 7], [100, 6]]),
+    },
+  ],
+};
+
+export const activities: Record<string, Activity> = { biking, drone, running };

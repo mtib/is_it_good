@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import type { DayScore } from "../lib/api";
 
 interface Props {
@@ -40,7 +40,7 @@ export function DayCard({ day }: Props) {
       {expanded && (
         <div className="day-details">
           {day.qualifiers.map((q) => (
-            <div key={q.id} className="qualifier-row">
+            <React.Fragment key={q.id}>
               <span className="qualifier-name">{q.name}</span>
               <span className="qualifier-value">
                 {q.value}{q.unit}
@@ -48,7 +48,7 @@ export function DayCard({ day }: Props) {
               <span className="qualifier-score" style={{ color: scoreColor(q.score) }}>
                 {q.score}/10
               </span>
-            </div>
+            </React.Fragment>
           ))}
         </div>
       )}
