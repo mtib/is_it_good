@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { geocode, type GeocodeResult } from "../lib/api";
 
 interface Props {
@@ -8,6 +8,12 @@ interface Props {
 
 export function LocationInput({ onSelect, initialValue }: Props) {
   const [query, setQuery] = useState(initialValue || "");
+
+  useEffect(() => {
+    if (initialValue && !query) {
+      setQuery(initialValue);
+    }
+  }, [initialValue]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
