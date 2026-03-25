@@ -1,0 +1,253 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-top: 0.25rem;
+}
+
+.location-input {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.location-input input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #e2e8f0;
+  font-size: 1rem;
+}
+
+.location-input input::placeholder {
+  color: #64748b;
+}
+
+.location-input button,
+.subscribe-btn,
+.copy-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.location-input button:hover,
+.subscribe-btn:hover,
+.copy-btn:hover {
+  background: #2563eb;
+}
+
+.location-input button:disabled,
+.subscribe-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.location-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  color: #94a3b8;
+}
+
+.location-display .coords {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.activity-picker {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.activity-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+}
+
+.activity-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.activity-btn:hover:not(.active) {
+  border-color: #475569;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.day-card {
+  background: #1e293b;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #334155;
+  transition: border-color 0.15s;
+}
+
+.day-card:hover {
+  border-color: #475569;
+}
+
+.day-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.day-weekday {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #cbd5e1;
+}
+
+.day-date {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.day-score {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.day-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.day-details {
+  margin-top: 0.75rem;
+  text-align: left;
+  border-top: 1px solid #334155;
+  padding-top: 0.5rem;
+}
+
+.qualifier-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  padding: 0.15rem 0;
+}
+
+.qualifier-name {
+  color: #94a3b8;
+}
+
+.qualifier-value {
+  color: #64748b;
+}
+
+.qualifier-score {
+  font-weight: 600;
+  min-width: 3rem;
+  text-align: right;
+}
+
+.calendar-link {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  background: #1e293b;
+  border-radius: 0.75rem;
+  border: 1px solid #334155;
+}
+
+.calendar-url-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #0f172a;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.calendar-url-box code {
+  flex: 1;
+  font-size: 0.8rem;
+  word-break: break-all;
+  color: #94a3b8;
+}
+
+.copy-btn {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.calendar-hint {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.loading {
+  color: #94a3b8;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.no-data {
+  color: #64748b;
+  text-align: center;
+  padding: 2rem;
+}
