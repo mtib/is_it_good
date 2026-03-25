@@ -50,7 +50,7 @@ export const biking: Activity = {
       id: "wind",
       name: "Wind",
       unit: "km/h",
-      weight: 2,
+      weight: 3,
       extract: (w) => w.wind_speed,
       scoreFn: piecewise([[0, 10], [10, 10], [25, 4], [40, 0]]),
     },
