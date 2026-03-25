@@ -220,6 +220,7 @@ export const aurora: Activity = {
       name: "Aurora Likelihood",
       unit: "Kp",
       weight: 8,
+      required: true,
       extract: (w, ctx) => {
         const kp = w.kp_max ?? 0;
         const lat = ctx?.lat ?? 60;

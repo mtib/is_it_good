@@ -12,6 +12,7 @@ export interface Qualifier {
   name: string;
   unit: string;
   weight: number;
+  required?: boolean; // if true and score is 0, overall score is forced to 0
   extract: (w: DailyWeather, ctx?: ScoringContext) => number;
   scoreFn: ScoreFn;
 }

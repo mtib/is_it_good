@@ -6,6 +6,8 @@ export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: Scorin
   let totalWeight = 0;
   const qualifiers: QualifierScore[] = [];
 
+  let requiredFailed = false;
+
   for (const q of activity.qualifiers) {
     const value = q.extract(weather, ctx);
     const score = Math.max(0, Math.min(10, q.scoreFn(value)));
@@ -18,11 +20,15 @@ export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: Scorin
       score: Math.round(score * 10) / 10,
     });
 
+    if (q.required && score === 0) {
+      requiredFailed = true;
+    }
+
     weightedSum += score * q.weight;
     totalWeight += q.weight;
   }
 
-  const overall = totalWeight > 0 ? weightedSum / totalWeight : 5;
+  const overall = requiredFailed ? 0 : (totalWeight > 0 ? weightedSum / totalWeight : 5);
   const rounded = Math.round(overall * 10) / 10;
 
   return {
