@@ -29,8 +29,8 @@ route("POST", "/api/calendar/subscribe", async (req) => {
     body.location_name
   );
 
-  const base = config.baseUrl || new URL(req.url).origin;
-  const url = `${base}/cal/${token}.ics`;
+  const path = `/cal/${token}.ics`;
+  const url = config.baseUrl ? `${config.baseUrl}${path}` : path;
 
   return jsonResponse({ token, url });
 });
