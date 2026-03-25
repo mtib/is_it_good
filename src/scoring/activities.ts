@@ -264,4 +264,43 @@ export const aurora: Activity = {
   ],
 };
 
-export const activities: Record<string, Activity> = { biking, drone, running, stargazing, aurora };
+export const hideAndSeek: Activity = {
+  id: "hide_and_seek",
+  name: "Hide and Seek",
+  qualifiers: [
+    {
+      id: "rain",
+      name: "Rain",
+      unit: "mm",
+      weight: 4,
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: piecewise([[0, 10], [1, 5], [3, 2], [8, 0]]),
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 3,
+      extract: (w) => w.wind_speed,
+      scoreFn: piecewise([[0, 10], [10, 10], [20, 7], [35, 3], [50, 0]]),
+    },
+    {
+      id: "temperature",
+      name: "Temperature",
+      unit: "°C",
+      weight: 2,
+      extract: (w) => w.temp_avg,
+      scoreFn: piecewise([[-10, 0], [0, 2], [10, 6], [18, 9], [25, 10], [32, 8], [40, 3]]),
+    },
+    {
+      id: "clouds",
+      name: "Cloud Cover",
+      unit: "%",
+      weight: 0.5,
+      extract: (w) => w.cloud_cover,
+      scoreFn: piecewise([[0, 10], [50, 8], [80, 6], [100, 4]]),
+    },
+  ],
+};
+
+export const activities: Record<string, Activity> = { biking, drone, running, stargazing, aurora, hide_and_seek: hideAndSeek };
