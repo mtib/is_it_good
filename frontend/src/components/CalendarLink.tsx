@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { subscribe } from "../lib/api";
 
 interface Props {
@@ -12,6 +12,10 @@ export function CalendarLink({ lat, lon, activity, locationName }: Props) {
   const [url, setUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setUrl(null);
+  }, [lat, lon, activity]);
 
   const handleSubscribe = async () => {
     setLoading(true);

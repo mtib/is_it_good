@@ -28,7 +28,7 @@ export function generateIcal(
 
     const description = day.qualifiers
       .map((q) => `${q.name}: ${q.value}${q.unit} (${q.score}/10)`)
-      .join("\\n");
+      .join("\n");
 
     lines.push(
       "BEGIN:VEVENT",
@@ -58,6 +58,7 @@ function nextDay(dateStr: string): string {
 function escapeText(text: string): string {
   return text
     .replace(/\\/g, "\\\\")
+    .replace(/\n/g, "\\n")
     .replace(/;/g, "\\;")
     .replace(/,/g, "\\,");
 }
