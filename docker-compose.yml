@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - OWM_API_KEY=${OWM_API_KEY}
+      - DB_PATH=/app/data/is_it_good.db
+      - PORT=3000
+    volumes:
+      - app-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  app-data:
