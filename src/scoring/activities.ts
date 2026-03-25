@@ -54,6 +54,22 @@ export const biking: Activity = {
       scoreFn: (v) => v,
     },
     {
+      id: "rain",
+      name: "Rain",
+      unit: "mm",
+      weight: 0.5,
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: bikingRainScore,
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 0.5,
+      extract: (w) => w.wind_speed,
+      scoreFn: bikingWindScore,
+    },
+    {
       id: "temperature",
       name: "Temperature",
       unit: "°C",
@@ -99,6 +115,22 @@ export const drone: Activity = {
         return wind * rain / 10;
       },
       scoreFn: (v) => v,
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 0.5,
+      extract: (w) => w.wind_speed,
+      scoreFn: droneWindScore,
+    },
+    {
+      id: "rain",
+      name: "Rain",
+      unit: "mm",
+      weight: 0.5,
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: droneRainScore,
     },
     {
       id: "visibility",
