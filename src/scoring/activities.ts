@@ -1,6 +1,20 @@
 import type { Activity } from "./types";
 import { auroraVisibilityScore } from "../weather/aurora";
 
+/** Calculate daylight hours from latitude and date using sunrise equation */
+function daylightHours(lat: number, date: string): number {
+  const d = new Date(date + "T12:00:00Z");
+  const dayOfYear = Math.floor((d.getTime() - new Date(d.getUTCFullYear(), 0, 0).getTime()) / 86400000);
+  const declination = 23.44 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
+  const latRad = (lat * Math.PI) / 180;
+  const declRad = (declination * Math.PI) / 180;
+  const cosHourAngle = -Math.tan(latRad) * Math.tan(declRad);
+  if (cosHourAngle <= -1) return 24; // midnight sun
+  if (cosHourAngle >= 1) return 0; // polar night
+  const hourAngle = Math.acos(cosHourAngle);
+  return (2 * hourAngle * 180) / (15 * Math.PI);
+}
+
 /** Piecewise linear interpolation from breakpoints [[x, y], ...] */
 function piecewise(points: [number, number][]): (value: number) => number {
   return (value: number) => {
@@ -300,6 +314,14 @@ export const hideAndSeek: Activity = {
       weight: 0.5,
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 10], [50, 8], [80, 6], [100, 4]]),
+    },
+    {
+      id: "daylight",
+      name: "Daylight Hours",
+      unit: "h",
+      weight: 2,
+      extract: (w, ctx) => daylightHours(ctx?.lat ?? 50, w.date),
+      scoreFn: piecewise([[0, 0], [6, 2], [10, 6], [14, 9], [18, 10]]),
     },
   ],
 };
