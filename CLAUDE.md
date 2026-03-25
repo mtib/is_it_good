@@ -33,9 +33,9 @@ See [implementation plan](.claude/plans/majestic-conjuring-tulip.md) for full de
 - `src/db/schema.ts` — SQLite initialization (WAL mode), table creation
 - `src/db/cache.ts` — Weather cache, geocode cache, calendar subscription CRUD
 - `src/weather/types.ts` — Normalized DailyWeather interface
-- `src/weather/openweathermap.ts` — OWM client (5-day free + 16-day paid tier)
+- `src/weather/openweathermap.ts` — OWM client (5-day free + 16-day paid tier), buckets by location-local date
 - `src/weather/provider.ts` — Multi-provider aggregator (prefers higher-res sources)
-- `src/scoring/activities.ts` — Biking and Drone activity definitions with piecewise-linear score functions
+- `src/scoring/activities.ts` — Biking, Drone, and Running activity definitions with piecewise-linear score functions
 - `src/scoring/engine.ts` — Weighted average scoring engine
 - `src/calendar/ical.ts` — RFC 5545 iCal generation with deterministic UIDs
 - `src/api/router.ts` — Pattern-match route dispatcher
@@ -48,7 +48,7 @@ See [implementation plan](.claude/plans/majestic-conjuring-tulip.md) for full de
 - `GET /api/forecast?lat=&lon=&activity=` — scored forecast per day
 - `GET /api/geocode?q=` — location search
 - `POST /api/calendar/subscribe` — create calendar subscription, returns URL
-- `GET /cal/:token.ics` — subscribable iCal feed
+- `GET /cal/:token.ics` — subscribable iCal feed (supports `?cutoff=N&mode=gte|lte` filtering)
 
 ## Environment Variables
 
