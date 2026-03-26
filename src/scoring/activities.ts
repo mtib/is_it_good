@@ -34,7 +34,7 @@ function piecewise(points: [number, number][]): (value: number) => number {
 }
 
 const bikingRainScore = piecewise([[0, 10], [1, 7], [5, 3], [10, 0]]);
-const bikingWindScore = piecewise([[0, 10], [10, 10], [25, 4], [40, 0]]);
+const bikingWindScore = piecewise([[0, 10], [15, 10], [25, 6], [40, 2], [50, 0]]);
 
 export const biking: Activity = {
   id: "biking",
