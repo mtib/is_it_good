@@ -12,6 +12,7 @@ export interface DailyWeather {
   visibility: number; // km
   weather_main: string; // e.g. "Clear", "Rain"
   weather_icon: string;
+  uvi?: number; // UV index (0-11+)
   source: string; // provider id
   kp_max?: number; // geomagnetic Kp index (0-9), from NOAA SWPC
   kp_avg?: number;

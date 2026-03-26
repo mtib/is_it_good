@@ -40,6 +40,7 @@ export interface QualifierScore {
   value: number;
   unit: string;
   score: number;
+  weight: number;
 }
 
 export interface DayScore {

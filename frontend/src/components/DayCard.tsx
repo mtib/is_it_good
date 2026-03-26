@@ -45,8 +45,8 @@ export function DayCard({ day }: Props) {
               <span className="qualifier-value">
                 {q.value}{q.unit}
               </span>
-              <span className="qualifier-score" style={{ color: scoreColor(q.score) }}>
-                {q.score}/10
+              <span className="qualifier-score" style={{ color: q.weight > 0 ? scoreColor(q.score) : "#64748b" }}>
+                {q.weight > 0 ? `${q.score}/10` : ""}
               </span>
             </React.Fragment>
           ))}

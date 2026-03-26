@@ -17,6 +17,7 @@ export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: Scorin
       value: Math.round(value * 10) / 10,
       unit: q.unit,
       score: Math.round(score * 10) / 10,
+      weight: q.weight,
     });
 
     if (q.combine) {

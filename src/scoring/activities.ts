@@ -33,6 +33,15 @@ function piecewise(points: [number, number][]): (value: number) => number {
   };
 }
 
+const uvQualifier = {
+  id: "uvi",
+  name: "UV Index",
+  unit: "",
+  weight: 0,
+  extract: (w: import("../weather/types").DailyWeather) => w.uvi ?? 0,
+  scoreFn: (v: number) => v,
+} as const;
+
 const bikingRainScore = piecewise([[0, 10], [1, 7], [5, 3], [10, 0]]);
 const bikingWindScore = piecewise([[0, 10], [15, 10], [25, 6], [40, 2], [50, 0]]);
 
@@ -82,6 +91,7 @@ export const biking: Activity = {
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 10], [30, 10], [70, 7], [100, 6]]),
     },
+    uvQualifier,
   ],
 };
 
@@ -135,6 +145,7 @@ export const drone: Activity = {
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 10], [50, 8], [80, 5], [100, 3]]),
     },
+    uvQualifier,
   ],
 };
 
@@ -164,7 +175,7 @@ export const running: Activity = {
       unit: "°C",
       weight: 3,
       extract: (w) => w.temp_avg,
-      scoreFn: piecewise([[-15, 0], [-5, 3], [5, 7], [12, 10], [20, 10], [28, 7], [35, 3], [42, 0]]),
+      scoreFn: piecewise([[-15, 0], [-5, 2], [0, 5], [5, 8], [10, 10], [15, 10], [20, 8], [28, 5], [35, 2], [42, 0]]),
     },
     {
       id: "humidity",
@@ -182,6 +193,7 @@ export const running: Activity = {
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 9], [40, 10], [80, 7], [100, 6]]),
     },
+    uvQualifier,
   ],
 };
 
@@ -344,6 +356,7 @@ export const hideAndSeek: Activity = {
       extract: (w, ctx) => daylightHours(ctx?.lat ?? 50, w.date),
       scoreFn: piecewise([[0, 0], [6, 2], [10, 6], [14, 9], [18, 10]]),
     },
+    uvQualifier,
   ],
 };
 

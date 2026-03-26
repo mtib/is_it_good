@@ -27,7 +27,9 @@ export function generateIcal(
     const uid = `${activityName.toLowerCase().replace(/\s+/g, "-")}-${lat}-${lon}-${day.date}@is_it_good`;
 
     const description = day.qualifiers
-      .map((q) => `${q.name}: ${q.value}${q.unit} (${q.score}/10)`)
+      .map((q) => q.weight > 0
+        ? `${q.name}: ${q.value}${q.unit} (${q.score}/10)`
+        : `${q.name}: ${q.value}${q.unit}`)
       .join("\n");
 
     lines.push(
