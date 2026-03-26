@@ -7,12 +7,20 @@ export interface ScoringContext {
   lon: number;
 }
 
+/**
+ * When `combine` is set, the qualifier still participates in the weighted average
+ * like normal. After the weighted average is computed, qualifiers with `combine`
+ * are applied as post-processing filters in ascending order of weight:
+ *
+ * - "low-pass":  score = min(score, qualifier_score)  — caps the overall score
+ * - "high-pass": score = max(score, qualifier_score)  — floors the overall score
+ */
 export interface Qualifier {
   id: string;
   name: string;
   unit: string;
   weight: number;
-  required?: boolean; // if true and score is 0, overall score is forced to 0
+  combine?: "low-pass" | "high-pass";
   extract: (w: DailyWeather, ctx?: ScoringContext) => number;
   scoreFn: ScoreFn;
 }

@@ -5,8 +5,7 @@ export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: Scorin
   let weightedSum = 0;
   let totalWeight = 0;
   const qualifiers: QualifierScore[] = [];
-
-  let requiredFailed = false;
+  const combineSteps: { weight: number; mode: "low-pass" | "high-pass"; score: number }[] = [];
 
   for (const q of activity.qualifiers) {
     const value = q.extract(weather, ctx);
@@ -20,15 +19,26 @@ export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: Scorin
       score: Math.round(score * 10) / 10,
     });
 
-    if (q.required && score === 0) {
-      requiredFailed = true;
+    if (q.combine) {
+      combineSteps.push({ weight: q.weight, mode: q.combine, score });
     }
 
     weightedSum += score * q.weight;
     totalWeight += q.weight;
   }
 
-  const overall = requiredFailed ? 0 : (totalWeight > 0 ? weightedSum / totalWeight : 5);
+  let overall = totalWeight > 0 ? weightedSum / totalWeight : 5;
+
+  // Apply combine filters in ascending weight order
+  combineSteps.sort((a, b) => a.weight - b.weight);
+  for (const step of combineSteps) {
+    if (step.mode === "low-pass") {
+      overall = Math.min(overall, step.score);
+    } else {
+      overall = Math.max(overall, step.score);
+    }
+  }
+
   const rounded = Math.round(overall * 10) / 10;
 
   return {

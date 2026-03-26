@@ -42,22 +42,11 @@ export const biking: Activity = {
   times: new Set(["daytime"]),
   qualifiers: [
     {
-      id: "conditions",
-      name: "Safety",
-      unit: "%",
-      weight: 6,
-      extract: (w) => {
-        const rain = bikingRainScore(w.rain_mm + w.snow_mm);
-        const wind = bikingWindScore(w.wind_speed);
-        return rain * wind;
-      },
-      scoreFn: (v) => v / 10,
-    },
-    {
       id: "rain",
       name: "Precipitation",
       unit: "mm",
-      weight: 0.5,
+      weight: 3,
+      combine: "low-pass",
       extract: (w) => w.rain_mm + w.snow_mm,
       scoreFn: bikingRainScore,
     },
@@ -65,7 +54,8 @@ export const biking: Activity = {
       id: "wind",
       name: "Wind",
       unit: "km/h",
-      weight: 0.5,
+      weight: 3,
+      combine: "low-pass",
       extract: (w) => w.wind_speed,
       scoreFn: bikingWindScore,
     },
@@ -105,22 +95,11 @@ export const drone: Activity = {
   times: new Set(["daytime"]),
   qualifiers: [
     {
-      id: "conditions",
-      name: "Safety",
-      unit: "%",
-      weight: 8,
-      extract: (w) => {
-        const wind = droneWindScore(w.wind_speed);
-        const rain = droneRainScore(w.rain_mm + w.snow_mm);
-        return wind * rain;
-      },
-      scoreFn: (v) => v / 10,
-    },
-    {
       id: "wind",
       name: "Wind",
       unit: "km/h",
-      weight: 0.5,
+      weight: 3,
+      combine: "low-pass",
       extract: (w) => w.wind_speed,
       scoreFn: droneWindScore,
     },
@@ -128,7 +107,8 @@ export const drone: Activity = {
       id: "rain",
       name: "Precipitation",
       unit: "mm",
-      weight: 0.5,
+      weight: 3,
+      combine: "low-pass",
       extract: (w) => w.rain_mm + w.snow_mm,
       scoreFn: droneRainScore,
     },
@@ -216,6 +196,7 @@ export const stargazing: Activity = {
       name: "Cloud Cover",
       unit: "%",
       weight: 8,
+      combine: "low-pass",
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 10], [10, 9], [30, 6], [60, 2], [80, 0]]),
     },
@@ -240,6 +221,7 @@ export const stargazing: Activity = {
       name: "Visibility",
       unit: "km",
       weight: 3,
+      combine: "low-pass",
       extract: (w) => w.visibility,
       scoreFn: piecewise([[0, 0], [2, 3], [5, 6], [10, 10]]),
     },
@@ -264,7 +246,7 @@ export const aurora: Activity = {
       name: "Aurora Likelihood",
       unit: "Kp",
       weight: 8,
-      required: true,
+      combine: "low-pass",
       extract: (w, ctx) => {
         const kp = w.kp_max ?? 0;
         const lat = ctx?.lat ?? 60;
@@ -278,6 +260,7 @@ export const aurora: Activity = {
       name: "Cloud Cover",
       unit: "%",
       weight: 6,
+      combine: "low-pass",
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 10], [10, 9], [30, 6], [60, 2], [80, 0]]),
     },
@@ -294,6 +277,7 @@ export const aurora: Activity = {
       name: "Visibility",
       unit: "km",
       weight: 3,
+      combine: "low-pass",
       extract: (w) => w.visibility,
       scoreFn: piecewise([[0, 0], [2, 3], [5, 6], [10, 10]]),
     },
