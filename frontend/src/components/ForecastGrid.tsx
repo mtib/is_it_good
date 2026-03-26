@@ -11,7 +11,7 @@ export function ForecastGrid({ days }: Props) {
   }
 
   return (
-    <div className="forecast-grid">
+    <div className="forecast-list">
       {days.map((day) => (
         <DayCard key={day.date} day={day} />
       ))}

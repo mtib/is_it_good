@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import type { DayScore } from "../lib/api";
 
 interface Props {
@@ -22,36 +22,52 @@ function formatDate(dateStr: string): { weekday: string; date: string } {
 }
 
 export function DayCard({ day }: Props) {
-  const [expanded, setExpanded] = useState(false);
   const { weekday, date } = formatDate(day.date);
+  const useTwo = day.qualifiers.length > 6;
+  const mid = useTwo ? Math.ceil(day.qualifiers.length / 2) : day.qualifiers.length;
+  const col1 = day.qualifiers.slice(0, mid);
+  const col2 = useTwo ? day.qualifiers.slice(mid) : [];
 
   return (
-    <div className={`day-card${expanded ? " expanded" : ""}`} onClick={() => setExpanded(!expanded)}>
-      <div className="day-header">
+    <div className="day-row">
+      <div className="day-date-col">
         <span className="day-weekday">{weekday}</span>
         <span className="day-date">{date}</span>
       </div>
-      <div className="day-score" style={{ color: scoreColor(day.overall) }}>
-        {day.overall}
+      <div className="day-score-col">
+        <span className="day-score" style={{ color: scoreColor(day.overall) }}>
+          {day.overall}
+        </span>
+        <span className="day-label" style={{ color: scoreColor(day.overall) }}>
+          {day.label}
+        </span>
       </div>
-      <div className="day-label" style={{ color: scoreColor(day.overall) }}>
-        {day.label}
-      </div>
-      {expanded && (
-        <div className="day-details">
-          {day.qualifiers.map((q) => (
-            <React.Fragment key={q.id}>
+      <div className={`day-qualifiers${useTwo ? " two-col" : ""}`}>
+        <div className="qualifier-col">
+          {col1.map((q) => (
+            <div key={q.id} className="qualifier-row">
               <span className="qualifier-name">{q.name}</span>
-              <span className="qualifier-value">
-                {q.value}{q.unit}
-              </span>
               <span className="qualifier-score" style={{ color: q.weight > 0 ? scoreColor(q.score) : "#64748b" }}>
                 {q.weight > 0 ? `${q.score}/10` : ""}
               </span>
-            </React.Fragment>
+              <span className="qualifier-value">{q.value}{q.unit}</span>
+            </div>
           ))}
         </div>
-      )}
+        {useTwo && (
+          <div className="qualifier-col">
+            {col2.map((q) => (
+              <div key={q.id} className="qualifier-row">
+                <span className="qualifier-name">{q.name}</span>
+                <span className="qualifier-score" style={{ color: q.weight > 0 ? scoreColor(q.score) : "#64748b" }}>
+                  {q.weight > 0 ? `${q.score}/10` : ""}
+                </span>
+                <span className="qualifier-value">{q.value}{q.unit}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
