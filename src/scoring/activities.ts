@@ -46,7 +46,6 @@ export const biking: Activity = {
       name: "Precipitation",
       unit: "mm",
       weight: 3,
-      combine: "low-pass",
       extract: (w) => w.rain_mm + w.snow_mm,
       scoreFn: bikingRainScore,
     },
