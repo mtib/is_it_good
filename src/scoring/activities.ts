@@ -436,7 +436,7 @@ export const swimming: Activity = {
       weight: 7,
       combine: "low-pass",
       extract: (w) => w.water_temp ?? null,
-      scoreFn: piecewise([[0, 0], [5, 2], [10, 5], [15, 7], [18, 8], [22, 10], [28, 10], [32, 7], [36, 3]]),
+      scoreFn: piecewise([[0, 0], [5, 2], [10, 5], [14, 7], [17, 8], [21, 10], [29, 10], [33, 7], [37, 3]]),
     },
     {
       id: "temperature",
@@ -445,7 +445,7 @@ export const swimming: Activity = {
       weight: 3,
       combine: "low-pass",
       extract: (w) => w.temp_avg,
-      scoreFn: piecewise([[0, 0], [10, 1], [18, 5], [24, 9], [30, 10], [36, 8], [42, 4]]),
+      scoreFn: piecewise([[0, 0], [8, 2], [15, 5], [20, 8], [25, 10], [32, 10], [38, 6], [44, 3]]),
     },
     {
       id: "waves",
