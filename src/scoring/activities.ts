@@ -435,7 +435,7 @@ export const swimming: Activity = {
       unit: "°C",
       weight: 5,
       extract: (w) => w.water_temp ?? w.temp_avg,
-      scoreFn: piecewise([[0, 0], [10, 1], [16, 4], [20, 7], [24, 10], [28, 10], [32, 7], [36, 3]]),
+      scoreFn: piecewise([[0, 0], [5, 2], [10, 5], [15, 7], [18, 8], [22, 10], [28, 10], [32, 7], [36, 3]]),
     },
     {
       id: "temperature",
