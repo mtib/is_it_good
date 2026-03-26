@@ -210,8 +210,6 @@ header h1 {
 .qualifier-name {
   color: var(--text-secondary);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .qualifier-score {
