@@ -87,16 +87,7 @@ export function App() {
       </header>
 
       <main>
-        <LocationInput onSelect={handleSetLocation} initialValue={location?.name} />
-
-        {location && (
-          <div className="location-display">
-            <span>{location.name}</span>
-            <span className="coords">
-              ({location.lat.toFixed(2)}, {location.lon.toFixed(2)})
-            </span>
-          </div>
-        )}
+        <LocationInput onSelect={handleSetLocation} initialValue={location?.name} location={location} />
 
         {activities.length > 0 && (
           <ActivityPicker
