@@ -366,3 +366,28 @@ header h1 {
   text-align: center;
   padding: 2rem;
 }
+
+@media (max-width: 640px) {
+  .day-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .day-date-col {
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .day-score-col {
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: baseline;
+  }
+
+  .day-qualifiers {
+    margin-left: 0;
+  }
+}
