@@ -283,6 +283,12 @@ header h1 {
   color: #64748b;
 }
 
+.forecast-loading {
+  opacity: 0.5;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
 .loading {
   color: #94a3b8;
   text-align: center;

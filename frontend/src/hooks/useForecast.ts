@@ -15,9 +15,8 @@ export function useForecast() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load forecast");
       setData(null);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   }, []);
 
   return { data, loading, error, load };

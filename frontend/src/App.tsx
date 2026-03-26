@@ -106,10 +106,14 @@ export function App() {
           />
         )}
 
-        {loading && <p className="loading">Loading forecast...</p>}
+        {loading && !data && <p className="loading">Loading forecast...</p>}
         {error && <p className="error">{error}</p>}
 
-        {data && <ForecastGrid days={data.days} />}
+        {data && (
+          <div className={loading ? "forecast-loading" : ""}>
+            <ForecastGrid days={data.days} />
+          </div>
+        )}
 
         {data && location && (
           <CalendarLink
