@@ -9,7 +9,7 @@ export interface ActivityInfo {
 export interface QualifierScore {
   id: string;
   name: string;
-  value: number;
+  value: number | null;
   unit: string;
   score: number;
   weight: number;

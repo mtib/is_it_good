@@ -39,7 +39,7 @@ const uvQualifier = {
   name: "UV Index",
   unit: "",
   weight: 0,
-  extract: (w: DailyWeather) => w.uvi ?? 0,
+  extract: (w: DailyWeather) => w.uvi ?? null,
   scoreFn: (v: number) => v,
 } as const;
 
@@ -49,7 +49,7 @@ const aqiOutdoorQualifier = {
   name: "Air Quality",
   unit: " EAQI",
   weight: 1,
-  extract: (w: DailyWeather) => w.aqi ?? 0,
+  extract: (w: DailyWeather) => w.aqi ?? null,
   scoreFn: piecewise([[0, 10], [20, 10], [40, 7], [60, 4], [80, 1], [100, 0]]),
 } as const;
 
@@ -58,7 +58,7 @@ const aqiIndoorQualifier = {
   name: "Air Quality",
   unit: " EAQI",
   weight: 1,
-  extract: (w: DailyWeather) => w.aqi ?? 0,
+  extract: (w: DailyWeather) => w.aqi ?? null,
   scoreFn: piecewise([[0, 2], [20, 3], [40, 5], [60, 7], [80, 9], [100, 10]]),
 } as const;
 
@@ -282,7 +282,8 @@ export const aurora: Activity = {
       weight: 8,
       combine: "low-pass",
       extract: (w, ctx) => {
-        const kp = w.kp_max ?? 0;
+        const kp = w.kp_max;
+        if (kp == null) return null;
         const lat = ctx?.lat ?? 60;
         return auroraVisibilityScore(kp, lat);
       },
@@ -434,7 +435,7 @@ export const swimming: Activity = {
       name: "Water Temp",
       unit: "°C",
       weight: 5,
-      extract: (w) => w.water_temp ?? w.temp_avg,
+      extract: (w) => w.water_temp ?? null,
       scoreFn: piecewise([[0, 0], [5, 2], [10, 5], [15, 7], [18, 8], [22, 10], [28, 10], [32, 7], [36, 3]]),
     },
     {
@@ -451,7 +452,7 @@ export const swimming: Activity = {
       unit: "m",
       weight: 3,
       combine: "low-pass",
-      extract: (w) => w.wave_height ?? 0,
+      extract: (w) => w.wave_height ?? null,
       scoreFn: piecewise([[0, 10], [0.5, 9], [1, 7], [1.5, 4], [2.5, 1], [4, 0]]),
     },
     {

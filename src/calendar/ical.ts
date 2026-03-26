@@ -27,9 +27,11 @@ export function generateIcal(
     const uid = `${activityName.toLowerCase().replace(/\s+/g, "-")}-${lat}-${lon}-${day.date}@is_it_good`;
 
     const description = day.qualifiers
-      .map((q) => q.weight > 0
-        ? `${q.name}: ${q.value}${q.unit} (${q.score}/10)`
-        : `${q.name}: ${q.value}${q.unit}`)
+      .filter((q) => q.value != null)
+      .map((q) => {
+        if (q.weight > 0) return `${q.name}: ${q.value}${q.unit} (${q.score}/10)`;
+        return `${q.name}: ${q.value}${q.unit}`;
+      })
       .join("\n");
 
     lines.push(

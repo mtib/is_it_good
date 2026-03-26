@@ -9,6 +9,20 @@ export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: Scorin
 
   for (const q of activity.qualifiers) {
     const value = q.extract(weather, ctx);
+
+    if (value == null) {
+      // No data available — include in output but don't contribute to scoring
+      qualifiers.push({
+        id: q.id,
+        name: q.name,
+        value: null,
+        unit: q.unit,
+        score: 0,
+        weight: 0,
+      });
+      continue;
+    }
+
     const score = Math.max(0, Math.min(10, q.scoreFn(value)));
 
     qualifiers.push({

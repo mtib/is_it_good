@@ -4,15 +4,17 @@ import { fetch5DayForecast, fetch16DayForecast } from "./openweathermap";
 import { fetchKpForecast } from "./aurora";
 import { fetchAirQuality } from "./airquality";
 import { fetchMarineForecast } from "./marine";
+import { fetchUVIndex } from "./uvindex";
 
 export async function getForecast(lat: number, lon: number, times?: Set<TimeOfDay>): Promise<DailyWeather[]> {
   // Fetch all available sources in parallel
-  const [days5, days16, kpData, aqiData, marineData] = await Promise.all([
+  const [days5, days16, kpData, aqiData, marineData, uvData] = await Promise.all([
     fetch5DayForecast(lat, lon, times).catch(() => [] as DailyWeather[]),
     fetch16DayForecast(lat, lon, times).catch(() => [] as DailyWeather[]),
     fetchKpForecast(lat, lon).catch(() => []),
     fetchAirQuality(lat, lon).catch(() => []),
     fetchMarineForecast(lat, lon).catch(() => []),
+    fetchUVIndex(lat, lon).catch(() => []),
   ]);
 
   // Merge weather: prefer 5-day (higher resolution) for overlapping dates, then fill with 16-day
@@ -54,6 +56,15 @@ export async function getForecast(lat: number, lon: number, times?: Set<TimeOfDa
       day.wave_height = marine.wave_height;
       day.wave_period = marine.wave_period;
       day.water_temp = marine.water_temp;
+    }
+  }
+
+  // Merge UV index data into weather days
+  const uvByDate = new Map(uvData.map((u) => [u.date, u]));
+  for (const [date, day] of byDate) {
+    const uv = uvByDate.get(date);
+    if (uv) {
+      day.uvi = uv.uvi;
     }
   }
 

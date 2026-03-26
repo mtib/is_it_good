@@ -21,7 +21,7 @@ export interface Qualifier {
   unit: string;
   weight: number;
   combine?: "low-pass" | "high-pass";
-  extract: (w: DailyWeather, ctx?: ScoringContext) => number;
+  extract: (w: DailyWeather, ctx?: ScoringContext) => number | null | undefined;
   scoreFn: ScoreFn;
 }
 
@@ -37,7 +37,7 @@ export interface Activity {
 export interface QualifierScore {
   id: string;
   name: string;
-  value: number;
+  value: number | null; // null when data source has no data
   unit: string;
   score: number;
   weight: number;

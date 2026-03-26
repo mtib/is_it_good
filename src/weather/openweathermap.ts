@@ -142,7 +142,6 @@ export async function fetch16DayForecast(lat: number, lon: number, _times?: Set<
       snow_mm: entry.snow || 0,
       cloud_cover: entry.clouds,
       visibility: 10, // not provided in daily, assume good
-      uvi: entry.uvi,
       weather_main: entry.weather[0]?.main || "Clear",
       weather_icon: entry.weather[0]?.icon || "01d",
       source: "owm_16d",
