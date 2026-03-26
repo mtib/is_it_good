@@ -282,8 +282,7 @@ export const aurora: Activity = {
       weight: 8,
       combine: "low-pass",
       extract: (w, ctx) => {
-        const kp = w.kp_max;
-        if (kp == null) return null;
+        const kp = w.kp_max ?? 0;
         const lat = ctx?.lat ?? 60;
         return auroraVisibilityScore(kp, lat);
       },
