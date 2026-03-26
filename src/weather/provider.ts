@@ -53,6 +53,7 @@ export async function getForecast(lat: number, lon: number, times?: Set<TimeOfDa
     if (marine) {
       day.wave_height = marine.wave_height;
       day.wave_period = marine.wave_period;
+      day.water_temp = marine.water_temp;
     }
   }
 

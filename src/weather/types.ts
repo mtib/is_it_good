@@ -16,6 +16,7 @@ export interface DailyWeather {
   aqi?: number; // European Air Quality Index (0-100+, lower is better)
   wave_height?: number; // max wave height in meters
   wave_period?: number; // max wave period in seconds
+  water_temp?: number | null; // sea surface temperature in °C
   source: string; // provider id
   kp_max?: number; // geomagnetic Kp index (0-9), from NOAA SWPC
   kp_avg?: number;

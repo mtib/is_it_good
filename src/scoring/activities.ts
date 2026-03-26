@@ -430,10 +430,18 @@ export const swimming: Activity = {
   times: new Set(["daytime"]),
   qualifiers: [
     {
-      id: "temperature",
-      name: "Temperature",
+      id: "water_temp",
+      name: "Water Temp",
       unit: "°C",
-      weight: 4,
+      weight: 5,
+      extract: (w) => w.water_temp ?? w.temp_avg,
+      scoreFn: piecewise([[0, 0], [10, 1], [16, 4], [20, 7], [24, 10], [28, 10], [32, 7], [36, 3]]),
+    },
+    {
+      id: "temperature",
+      name: "Air Temp",
+      unit: "°C",
+      weight: 2,
       extract: (w) => w.temp_avg,
       scoreFn: piecewise([[0, 0], [10, 1], [18, 5], [24, 9], [30, 10], [36, 8], [42, 4]]),
     },
