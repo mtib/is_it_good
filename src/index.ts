@@ -92,13 +92,12 @@ const server = Bun.serve({
       if (existsSync(filePath)) {
         const file = Bun.file(filePath);
         const response = new Response(file);
-        // Hashed assets get long cache, HTML/SPA fallback gets short cache
         const isHashed = /\.[a-f0-9]{8,}\.\w+$/.test(path);
-        const maxAge = isSpaFallback ? 0 : isHashed ? 31536000 : STATIC_MAX_AGE;
-        if (isSpaFallback) {
-          response.headers.set("Cache-Control", "no-cache");
+        if (isHashed) {
+          response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
+          return response;
         }
-        return withEtag(req, response, maxAge);
+        return withEtag(req, response, STATIC_MAX_AGE);
       }
     }
 
