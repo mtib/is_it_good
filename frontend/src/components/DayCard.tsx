@@ -1,5 +1,4 @@
-import React from "react";
-import type { DayScore } from "../lib/api";
+import type { DayScore, QualifierScore } from "../lib/api";
 
 interface Props {
   day: DayScore;
@@ -20,6 +19,26 @@ function formatDate(dateStr: string): { weekday: string; date: string } {
     weekday: d.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" }),
     date: d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }),
   };
+}
+
+function hasValue(q: QualifierScore): boolean {
+  return q.value !== null && q.value !== undefined;
+}
+
+function QualifierCol({ qualifiers }: { qualifiers: QualifierScore[] }) {
+  return (
+    <div className="qualifier-col">
+      {qualifiers.map((q) => (
+        <div key={q.id} className="qualifier-row">
+          <span className="qualifier-name">{q.name}</span>
+          <span className="qualifier-score" style={{ color: hasValue(q) && q.weight > 0 ? scoreColor(q.score) : "var(--text-muted)" }}>
+            {hasValue(q) && q.weight > 0 ? `${q.score}/10` : ""}
+          </span>
+          <span className="qualifier-value">{hasValue(q) ? `${q.value}${q.unit}` : "~"}</span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export function DayCard({ day, highlighted }: Props) {
@@ -44,30 +63,8 @@ export function DayCard({ day, highlighted }: Props) {
         </span>
       </div>
       <div className={`day-qualifiers${useTwo ? " two-col" : ""}`}>
-        <div className="qualifier-col">
-          {col1.map((q) => (
-            <div key={q.id} className="qualifier-row">
-              <span className="qualifier-name">{q.name}</span>
-              <span className="qualifier-score" style={{ color: q.value !== null && q.value !== undefined && q.weight > 0 ? scoreColor(q.score) : "var(--text-muted)" }}>
-                {q.value !== null && q.value !== undefined && q.weight > 0 ? `${q.score}/10` : ""}
-              </span>
-              <span className="qualifier-value">{q.value === null || q.value === undefined ? "~" : `${q.value}${q.unit}`}</span>
-            </div>
-          ))}
-        </div>
-        {useTwo && (
-          <div className="qualifier-col">
-            {col2.map((q) => (
-              <div key={q.id} className="qualifier-row">
-                <span className="qualifier-name">{q.name}</span>
-                <span className="qualifier-score" style={{ color: q.value !== null && q.value !== undefined && q.weight > 0 ? scoreColor(q.score) : "var(--text-muted)" }}>
-                  {q.value !== null && q.value !== undefined && q.weight > 0 ? `${q.score}/10` : ""}
-                </span>
-                <span className="qualifier-value">{q.value === null || q.value === undefined ? "~" : `${q.value}${q.unit}`}</span>
-              </div>
-            ))}
-          </div>
-        )}
+        <QualifierCol qualifiers={col1} />
+        {useTwo && <QualifierCol qualifiers={col2} />}
       </div>
     </div>
   );
