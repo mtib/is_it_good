@@ -11,12 +11,9 @@ export interface KpForecastEntry {
   g_scale: string | null; // G1-G5 or null
 }
 
-interface RawKpEntry {
-  time_tag: string;
-  kp: number;
-  observed: string;
-  noaa_scale: string | null;
-}
+// NOAA returns an array of arrays: [time_tag, kp, observed, noaa_scale]
+// First row is the header. Values are strings.
+type RawKpRow = [string, string, string, string | null];
 
 /**
  * Fetch Kp index forecast from NOAA SWPC.
@@ -40,15 +37,17 @@ export async function fetchKpForecast(lat: number, lon: number): Promise<KpForec
     throw new Error(`NOAA Kp forecast error: ${res.status}`);
   }
 
-  const raw: RawKpEntry[] = await res.json();
+  const raw: RawKpRow[] = await res.json();
 
   // Group by date and compute nightly stats
   // Night hours: 18:00-06:00 (generous window for aurora viewing)
   const byDate = new Map<string, { kps: number[]; scales: (string | null)[] }>();
 
-  for (const entry of raw) {
-    if (!entry.time_tag || entry.kp === undefined) continue;
-    const dt = new Date(entry.time_tag + "Z");
+  for (let i = 1; i < raw.length; i++) { // skip header row
+    const [timeTag, kpStr, , scale] = raw[i];
+    const kp = parseFloat(kpStr);
+    if (!timeTag || isNaN(kp)) continue;
+    const dt = new Date(timeTag + "Z");
     const hour = dt.getUTCHours();
 
     // Assign to the evening's date: hours 18-23 = that date, hours 0-5 = previous date
@@ -65,8 +64,8 @@ export async function fetchKpForecast(lat: number, lon: number): Promise<KpForec
 
     if (!byDate.has(date)) byDate.set(date, { kps: [], scales: [] });
     const group = byDate.get(date)!;
-    group.kps.push(entry.kp);
-    group.scales.push(entry.noaa_scale);
+    group.kps.push(kp);
+    group.scales.push(scale);
   }
 
   const entries: KpForecastEntry[] = [];
