@@ -48,10 +48,10 @@ export function DayCard({ day, highlighted }: Props) {
           {col1.map((q) => (
             <div key={q.id} className="qualifier-row">
               <span className="qualifier-name">{q.name}</span>
-              <span className="qualifier-score" style={{ color: q.value != null && q.weight > 0 ? scoreColor(q.score) : "var(--text-muted)" }}>
-                {q.value != null && q.weight > 0 ? `${q.score}/10` : ""}
+              <span className="qualifier-score" style={{ color: q.value !== null && q.value !== undefined && q.weight > 0 ? scoreColor(q.score) : "var(--text-muted)" }}>
+                {q.value !== null && q.value !== undefined && q.weight > 0 ? `${q.score}/10` : ""}
               </span>
-              <span className="qualifier-value">{q.value != null ? `${q.value}${q.unit}` : "~"}</span>
+              <span className="qualifier-value">{q.value === null || q.value === undefined ? "~" : `${q.value}${q.unit}`}</span>
             </div>
           ))}
         </div>
