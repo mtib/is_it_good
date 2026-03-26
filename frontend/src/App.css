@@ -166,8 +166,8 @@ header h1 {
 .day-qualifiers {
   display: flex;
   gap: 1.5rem;
-  flex: 1;
   min-width: 0;
+  margin-left: auto;
 }
 
 .day-qualifiers.two-col {
@@ -184,7 +184,7 @@ header h1 {
 
 .qualifier-row {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: auto auto auto;
   gap: 0 0.5rem;
   align-items: center;
   font-size: 0.75rem;
