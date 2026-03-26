@@ -391,3 +391,10 @@ header h1 {
     margin-left: 0;
   }
 }
+
+@media (max-width: 500px) {
+  .day-qualifiers.two-col {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+}
