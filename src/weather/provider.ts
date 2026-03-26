@@ -3,14 +3,16 @@ import type { TimeOfDay } from "../scoring/types";
 import { fetch5DayForecast, fetch16DayForecast } from "./openweathermap";
 import { fetchKpForecast } from "./aurora";
 import { fetchAirQuality } from "./airquality";
+import { fetchMarineForecast } from "./marine";
 
 export async function getForecast(lat: number, lon: number, times?: Set<TimeOfDay>): Promise<DailyWeather[]> {
   // Fetch all available sources in parallel
-  const [days5, days16, kpData, aqiData] = await Promise.all([
+  const [days5, days16, kpData, aqiData, marineData] = await Promise.all([
     fetch5DayForecast(lat, lon, times).catch(() => [] as DailyWeather[]),
     fetch16DayForecast(lat, lon, times).catch(() => [] as DailyWeather[]),
     fetchKpForecast(lat, lon).catch(() => []),
     fetchAirQuality(lat, lon).catch(() => []),
+    fetchMarineForecast(lat, lon).catch(() => []),
   ]);
 
   // Merge weather: prefer 5-day (higher resolution) for overlapping dates, then fill with 16-day
@@ -41,6 +43,16 @@ export async function getForecast(lat: number, lon: number, times?: Set<TimeOfDa
     const aqi = aqiByDate.get(date);
     if (aqi) {
       day.aqi = aqi.aqi;
+    }
+  }
+
+  // Merge marine data into weather days
+  const marineByDate = new Map(marineData.map((m) => [m.date, m]));
+  for (const [date, day] of byDate) {
+    const marine = marineByDate.get(date);
+    if (marine) {
+      day.wave_height = marine.wave_height;
+      day.wave_period = marine.wave_period;
     }
   }
 

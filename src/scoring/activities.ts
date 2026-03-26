@@ -424,4 +424,55 @@ export const gaming: Activity = {
   ],
 };
 
-export const activities: Record<string, Activity> = { biking, drone, running, stargazing, aurora, hide_and_seek: hideAndSeek, gaming };
+export const swimming: Activity = {
+  id: "swimming",
+  name: "Swimming",
+  times: new Set(["daytime"]),
+  qualifiers: [
+    {
+      id: "temperature",
+      name: "Temperature",
+      unit: "°C",
+      weight: 4,
+      extract: (w) => w.temp_avg,
+      scoreFn: piecewise([[0, 0], [10, 1], [18, 5], [24, 9], [30, 10], [36, 8], [42, 4]]),
+    },
+    {
+      id: "waves",
+      name: "Wave Height",
+      unit: "m",
+      weight: 3,
+      combine: "low-pass",
+      extract: (w) => w.wave_height ?? 0,
+      scoreFn: piecewise([[0, 10], [0.5, 9], [1, 7], [1.5, 4], [2.5, 1], [4, 0]]),
+    },
+    {
+      id: "rain",
+      name: "Precipitation",
+      unit: "mm",
+      weight: 1,
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: piecewise([[0, 10], [3, 8], [8, 5], [15, 2]]),
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 2,
+      extract: (w) => w.wind_speed,
+      scoreFn: piecewise([[0, 10], [15, 10], [25, 6], [40, 2], [50, 0]]),
+    },
+    {
+      id: "clouds",
+      name: "Cloud Cover",
+      unit: "%",
+      weight: 1,
+      extract: (w) => w.cloud_cover,
+      scoreFn: piecewise([[0, 10], [30, 10], [70, 7], [100, 5]]),
+    },
+    aqiOutdoorQualifier,
+    uvQualifier,
+  ],
+};
+
+export const activities: Record<string, Activity> = { biking, drone, running, swimming, stargazing, aurora, hide_and_seek: hideAndSeek, gaming };
