@@ -103,8 +103,7 @@ header h1 {
   cursor: not-allowed;
 }
 
-.activity-picker {
-}
+.activity-picker {}
 
 .activity-select {
   padding: 0.75rem 1rem;
@@ -191,6 +190,7 @@ header h1 {
 
 .day-qualifiers.two-col {
   display: flex;
+  gap: 3rem;
 }
 
 .qualifier-col {
