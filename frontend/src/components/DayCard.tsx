@@ -3,6 +3,7 @@ import type { DayScore } from "../lib/api";
 
 interface Props {
   day: DayScore;
+  highlighted?: boolean;
 }
 
 function scoreColor(score: number): string {
@@ -21,7 +22,7 @@ function formatDate(dateStr: string): { weekday: string; date: string } {
   };
 }
 
-export function DayCard({ day }: Props) {
+export function DayCard({ day, highlighted }: Props) {
   const { weekday, date } = formatDate(day.date);
   const useTwo = day.qualifiers.length > 6;
   const mid = useTwo ? Math.ceil(day.qualifiers.length / 2) : day.qualifiers.length;
@@ -29,7 +30,7 @@ export function DayCard({ day }: Props) {
   const col2 = useTwo ? day.qualifiers.slice(mid) : [];
 
   return (
-    <div className="day-row">
+    <div className={`day-row${highlighted ? " day-row-highlighted" : ""}`}>
       <div className="day-date-col">
         <span className="day-weekday">{weekday}</span>
         <span className="day-date">{date}</span>

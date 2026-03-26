@@ -42,6 +42,9 @@ export function App() {
   const [location, setLocation] = useState<GeocodeResult | null>(null);
   const { data, loading, error, load } = useForecast();
   const [initialized, setInitialized] = useState(false);
+  const [cutoffEnabled, setCutoffEnabled] = useState(false);
+  const [cutoffScore, setCutoffScore] = useState("6");
+  const [cutoffMode, setCutoffMode] = useState<"gte" | "lte">("gte");
 
   useEffect(() => {
     fetchActivities().then((list) => {
@@ -79,6 +82,10 @@ export function App() {
     setSelectedActivity(id);
   }, []);
 
+  const cutoffFilter = cutoffEnabled
+    ? { score: parseFloat(cutoffScore) || 0, mode: cutoffMode }
+    : null;
+
   return (
     <div className="app">
       <header>
@@ -97,22 +104,28 @@ export function App() {
           />
         )}
 
-        {loading && !data && <p className="loading">Loading forecast...</p>}
-        {error && <p className="error">{error}</p>}
-
-        {data && (
-          <div className={loading ? "forecast-loading" : ""}>
-            <ForecastGrid days={data.days} />
-          </div>
-        )}
-
         {data && location && (
           <CalendarLink
             lat={location.lat}
             lon={location.lon}
             activity={selectedActivity}
             locationName={location.name}
+            cutoffEnabled={cutoffEnabled}
+            cutoffScore={cutoffScore}
+            cutoffMode={cutoffMode}
+            onCutoffEnabledChange={setCutoffEnabled}
+            onCutoffScoreChange={setCutoffScore}
+            onCutoffModeChange={setCutoffMode}
           />
+        )}
+
+        {loading && !data && <p className="loading">Loading forecast...</p>}
+        {error && <p className="error">{error}</p>}
+
+        {data && (
+          <div className={loading ? "forecast-loading" : ""}>
+            <ForecastGrid days={data.days} cutoff={cutoffFilter} />
+          </div>
         )}
       </main>
     </div>

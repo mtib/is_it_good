@@ -113,6 +113,11 @@ header h1 {
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   border: 1px solid #334155;
+  transition: border-color 0.15s;
+}
+
+.day-row-highlighted {
+  border-color: #3b82f6;
 }
 
 .day-date-col {

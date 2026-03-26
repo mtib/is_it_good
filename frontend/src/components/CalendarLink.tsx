@@ -6,15 +6,22 @@ interface Props {
   lon: number;
   activity: string;
   locationName: string;
+  cutoffEnabled: boolean;
+  cutoffScore: string;
+  cutoffMode: "gte" | "lte";
+  onCutoffEnabledChange: (v: boolean) => void;
+  onCutoffScoreChange: (v: string) => void;
+  onCutoffModeChange: (v: "gte" | "lte") => void;
 }
 
-export function CalendarLink({ lat, lon, activity, locationName }: Props) {
+export function CalendarLink({
+  lat, lon, activity, locationName,
+  cutoffEnabled, cutoffScore, cutoffMode,
+  onCutoffEnabledChange, onCutoffScoreChange, onCutoffModeChange,
+}: Props) {
   const [url, setUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [cutoffEnabled, setCutoffEnabled] = useState(false);
-  const [cutoffScore, setCutoffScore] = useState("6");
-  const [cutoffMode, setCutoffMode] = useState<"gte" | "lte">("gte");
 
   useEffect(() => {
     setUrl(null);
@@ -54,7 +61,7 @@ export function CalendarLink({ lat, lon, activity, locationName }: Props) {
           <input
             type="checkbox"
             checked={cutoffEnabled}
-            onChange={(e) => setCutoffEnabled(e.target.checked)}
+            onChange={(e) => onCutoffEnabledChange(e.target.checked)}
           />
           <span>Filter by score cutoff</span>
         </label>
@@ -64,7 +71,7 @@ export function CalendarLink({ lat, lon, activity, locationName }: Props) {
               <span>Only show days scoring</span>
               <select
                 value={cutoffMode}
-                onChange={(e) => setCutoffMode(e.target.value as "gte" | "lte")}
+                onChange={(e) => onCutoffModeChange(e.target.value as "gte" | "lte")}
               >
                 <option value="gte">&ge;</option>
                 <option value="lte">&le;</option>
@@ -75,11 +82,11 @@ export function CalendarLink({ lat, lon, activity, locationName }: Props) {
                 max={10}
                 step={0.5}
                 value={cutoffScore}
-                onChange={(e) => setCutoffScore(e.target.value)}
+                onChange={(e) => onCutoffScoreChange(e.target.value)}
                 onBlur={() => {
                   const v = parseFloat(cutoffScore);
-                  if (isNaN(v)) setCutoffScore("0");
-                  else setCutoffScore(String(Math.min(10, Math.max(0, v))));
+                  if (isNaN(v)) onCutoffScoreChange("0");
+                  else onCutoffScoreChange(String(Math.min(10, Math.max(0, v))));
                 }}
                 className="cutoff-input"
               />
