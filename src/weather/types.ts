@@ -13,6 +13,7 @@ export interface DailyWeather {
   weather_main: string; // e.g. "Clear", "Rain"
   weather_icon: string;
   uvi?: number; // UV index (0-11+)
+  aqi?: number; // European Air Quality Index (0-100+, lower is better)
   source: string; // provider id
   kp_max?: number; // geomagnetic Kp index (0-9), from NOAA SWPC
   kp_avg?: number;

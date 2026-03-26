@@ -1,4 +1,5 @@
 import type { Activity } from "./types";
+import type { DailyWeather } from "../weather/types";
 import { auroraVisibilityScore } from "../weather/aurora";
 
 /** Calculate daylight hours from latitude and date using sunrise equation */
@@ -38,8 +39,27 @@ const uvQualifier = {
   name: "UV Index",
   unit: "",
   weight: 0,
-  extract: (w: import("../weather/types").DailyWeather) => w.uvi ?? 0,
+  extract: (w: DailyWeather) => w.uvi ?? 0,
   scoreFn: (v: number) => v,
+} as const;
+
+// European AQI: 0-20 good, 20-40 fair, 40-60 moderate, 60-80 poor, 80-100 very poor, 100+ extremely poor
+const aqiOutdoorQualifier = {
+  id: "aqi",
+  name: "Air Quality",
+  unit: " EAQI",
+  weight: 1,
+  extract: (w: DailyWeather) => w.aqi ?? 0,
+  scoreFn: piecewise([[0, 10], [20, 10], [40, 7], [60, 4], [80, 1], [100, 0]]),
+} as const;
+
+const aqiIndoorQualifier = {
+  id: "aqi",
+  name: "Air Quality",
+  unit: " EAQI",
+  weight: 1,
+  extract: (w: DailyWeather) => w.aqi ?? 0,
+  scoreFn: piecewise([[0, 2], [20, 3], [40, 5], [60, 7], [80, 9], [100, 10]]),
 } as const;
 
 const bikingRainScore = piecewise([[0, 10], [1, 7], [5, 3], [10, 0]]);
@@ -91,6 +111,7 @@ export const biking: Activity = {
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 10], [30, 10], [70, 7], [100, 6]]),
     },
+    aqiOutdoorQualifier,
     uvQualifier,
   ],
 };
@@ -145,6 +166,7 @@ export const drone: Activity = {
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 10], [50, 8], [80, 5], [100, 3]]),
     },
+    aqiOutdoorQualifier,
     uvQualifier,
   ],
 };
@@ -193,6 +215,7 @@ export const running: Activity = {
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 9], [40, 10], [80, 7], [100, 6]]),
     },
+    aqiOutdoorQualifier,
     uvQualifier,
   ],
 };
@@ -356,6 +379,7 @@ export const hideAndSeek: Activity = {
       extract: (w, ctx) => daylightHours(ctx?.lat ?? 50, w.date),
       scoreFn: piecewise([[0, 0], [6, 2], [10, 6], [14, 9], [18, 10]]),
     },
+    aqiOutdoorQualifier,
     uvQualifier,
   ],
 };
@@ -396,6 +420,7 @@ export const gaming: Activity = {
       extract: (w) => w.cloud_cover,
       scoreFn: piecewise([[0, 2], [30, 4], [70, 7], [100, 10]]),
     },
+    aqiIndoorQualifier,
   ],
 };
 

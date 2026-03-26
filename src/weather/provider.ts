@@ -2,13 +2,15 @@ import type { DailyWeather } from "./types";
 import type { TimeOfDay } from "../scoring/types";
 import { fetch5DayForecast, fetch16DayForecast } from "./openweathermap";
 import { fetchKpForecast } from "./aurora";
+import { fetchAirQuality } from "./airquality";
 
 export async function getForecast(lat: number, lon: number, times?: Set<TimeOfDay>): Promise<DailyWeather[]> {
   // Fetch all available sources in parallel
-  const [days5, days16, kpData] = await Promise.all([
+  const [days5, days16, kpData, aqiData] = await Promise.all([
     fetch5DayForecast(lat, lon, times).catch(() => [] as DailyWeather[]),
     fetch16DayForecast(lat, lon, times).catch(() => [] as DailyWeather[]),
     fetchKpForecast(lat, lon).catch(() => []),
+    fetchAirQuality(lat, lon).catch(() => []),
   ]);
 
   // Merge weather: prefer 5-day (higher resolution) for overlapping dates, then fill with 16-day
@@ -30,6 +32,15 @@ export async function getForecast(lat: number, lon: number, times?: Set<TimeOfDa
       day.kp_max = kp.kp_max;
       day.kp_avg = kp.kp_avg;
       day.g_scale = kp.g_scale;
+    }
+  }
+
+  // Merge AQI data into weather days
+  const aqiByDate = new Map(aqiData.map((a) => [a.date, a]));
+  for (const [date, day] of byDate) {
+    const aqi = aqiByDate.get(date);
+    if (aqi) {
+      day.aqi = aqi.aqi;
     }
   }
 
