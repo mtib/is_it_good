@@ -19,6 +19,11 @@ Web server that rates how good each day is for outdoor activities based on weath
 - `docker compose up` — run via Docker
 - `bunx tsc --noEmit` — type-check backend
 
+## Workflow
+
+- After completing a feature implementation, commit and push without asking.
+- When presented with the option to do something or stop and ask for permission, always do it — the user will block the action if they don't want it.
+
 ## Commit Convention
 
 One-line semantic commits, no body. Never include co-author lines.
