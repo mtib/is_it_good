@@ -7,11 +7,11 @@ interface Props {
 }
 
 function scoreColor(score: number): string {
-  if (score < 2) return "#ef4444";
-  if (score < 4) return "#f97316";
-  if (score < 6) return "#eab308";
-  if (score < 8) return "#22c55e";
-  return "#16a34a";
+  if (score < 2) return "var(--score-bad)";
+  if (score < 4) return "var(--score-poor)";
+  if (score < 6) return "var(--score-fair)";
+  if (score < 8) return "var(--score-good)";
+  return "var(--score-great)";
 }
 
 function formatDate(dateStr: string): { weekday: string; date: string } {
@@ -48,7 +48,7 @@ export function DayCard({ day, highlighted }: Props) {
           {col1.map((q) => (
             <div key={q.id} className="qualifier-row">
               <span className="qualifier-name">{q.name}</span>
-              <span className="qualifier-score" style={{ color: q.weight > 0 ? scoreColor(q.score) : "#64748b" }}>
+              <span className="qualifier-score" style={{ color: q.weight > 0 ? scoreColor(q.score) : "var(--text-muted)" }}>
                 {q.weight > 0 ? `${q.score}/10` : ""}
               </span>
               <span className="qualifier-value">{q.value}{q.unit}</span>
@@ -60,7 +60,7 @@ export function DayCard({ day, highlighted }: Props) {
             {col2.map((q) => (
               <div key={q.id} className="qualifier-row">
                 <span className="qualifier-name">{q.name}</span>
-                <span className="qualifier-score" style={{ color: q.weight > 0 ? scoreColor(q.score) : "#64748b" }}>
+                <span className="qualifier-score" style={{ color: q.weight > 0 ? scoreColor(q.score) : "var(--text-muted)" }}>
                   {q.weight > 0 ? `${q.score}/10` : ""}
                 </span>
                 <span className="qualifier-value">{q.value}{q.unit}</span>
