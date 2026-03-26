@@ -13,7 +13,7 @@ export function CalendarLink({ lat, lon, activity, locationName }: Props) {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [cutoffEnabled, setCutoffEnabled] = useState(false);
-  const [cutoffScore, setCutoffScore] = useState(6);
+  const [cutoffScore, setCutoffScore] = useState("6");
   const [cutoffMode, setCutoffMode] = useState<"gte" | "lte">("gte");
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export function CalendarLink({ lat, lon, activity, locationName }: Props) {
   const buildFullUrl = (baseUrl: string) => {
     let full = window.location.origin + baseUrl;
     if (cutoffEnabled) {
-      full += `?cutoff=${cutoffScore}&mode=${cutoffMode}`;
+      full += `?cutoff=${parseFloat(cutoffScore) || 0}&mode=${cutoffMode}`;
     }
     return full;
   };
@@ -75,7 +75,12 @@ export function CalendarLink({ lat, lon, activity, locationName }: Props) {
                 max={10}
                 step={0.5}
                 value={cutoffScore}
-                onChange={(e) => setCutoffScore(parseFloat(e.target.value) || 0)}
+                onChange={(e) => setCutoffScore(e.target.value)}
+                onBlur={() => {
+                  const v = parseFloat(cutoffScore);
+                  if (isNaN(v)) setCutoffScore("0");
+                  else setCutoffScore(String(Math.min(10, Math.max(0, v))));
+                }}
                 className="cutoff-input"
               />
             </label>
