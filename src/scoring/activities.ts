@@ -556,9 +556,8 @@ export const lueften: Activity = {
       name: "Wind",
       unit: "km/h",
       weight: 5,
-      combine: "low-pass",
       extract: (w) => w.wind_speed,
-      scoreFn: piecewise([[0, 10], [5, 8], [10, 3], [20, 0]]),
+      scoreFn: piecewise([[0, 10], [10, 8], [15, 3], [25, 0]]),
     },
     {
       id: "humidity",
