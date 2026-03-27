@@ -538,4 +538,37 @@ export const swimmingSport: Activity = {
   ],
 };
 
-export const activities: Record<string, Activity> = { biking, drone, running, swimming, swimming_sport: swimmingSport, stargazing, aurora, hide_and_seek: hideAndSeek, gaming };
+export const lueften: Activity = {
+  id: "lueften",
+  name: "Lüften",
+  qualifiers: [
+    {
+      id: "rain",
+      name: "Precipitation",
+      unit: "mm",
+      weight: 10,
+      combine: "low-pass",
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: piecewise([[0, 10], [0.1, 5], [0.2, 0]]),
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 5,
+      combine: "low-pass",
+      extract: (w) => w.wind_speed,
+      scoreFn: piecewise([[0, 10], [5, 8], [10, 3], [20, 0]]),
+    },
+    {
+      id: "humidity",
+      name: "Humidity",
+      unit: "%",
+      weight: 1,
+      extract: (w) => w.humidity,
+      scoreFn: piecewise([[0, 10], [90, 10], [100, 5]]),
+    },
+  ],
+};
+
+export const activities: Record<string, Activity> = { biking, drone, running, swimming, swimming_sport: swimmingSport, stargazing, aurora, hide_and_seek: hideAndSeek, gaming, lueften };
