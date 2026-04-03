@@ -1,7 +1,7 @@
 import type { Activity, DayScore, QualifierScore, ScoringContext } from "./types";
 import type { DailyWeather } from "../weather/types";
 
-export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: ScoringContext): DayScore {
+export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: ScoringContext): DayScore | null {
   let weightedSum = 0;
   let totalWeight = 0;
   const qualifiers: QualifierScore[] = [];
@@ -11,6 +11,7 @@ export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: Scorin
     const value = q.extract(weather, ctx);
 
     if (value == null) {
+      if (q.combine === "low-pass") return null;
       // No data available — include in output but don't contribute to scoring
       qualifiers.push({
         id: q.id,
@@ -74,5 +75,5 @@ function getLabel(score: number): string {
 }
 
 export function scoreForecast(activity: Activity, forecast: DailyWeather[], ctx?: ScoringContext): DayScore[] {
-  return forecast.map((w) => scoreDay(activity, w, ctx));
+  return forecast.map((w) => scoreDay(activity, w, ctx)).filter((d): d is DayScore => d !== null);
 }
