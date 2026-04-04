@@ -62,8 +62,7 @@ export function scoreDay(activity: Activity, weather: DailyWeather, ctx?: Scorin
     overall: rounded,
     label: getLabel(rounded),
     qualifiers,
-    source: weather.source,
-  };
+};
 }
 
 function getLabel(score: number): string {

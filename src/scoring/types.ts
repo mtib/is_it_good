@@ -48,5 +48,4 @@ export interface DayScore {
   overall: number;
   label: string;
   qualifiers: QualifierScore[];
-  source: string;
 }
