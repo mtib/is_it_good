@@ -915,6 +915,9 @@ export const windowCleaning: Activity = {
 const outdoorMealRainScore = piecewise([[0, 10], [0.2, 6], [0.5, 3], [1, 1], [3, 0]]);
 const outdoorMealWindScore = piecewise([[0, 10], [10, 9], [15, 7], [20, 4], [30, 1], [40, 0]]);
 const outdoorMealCloudScore = piecewise([[0, 10], [40, 9], [80, 7], [100, 6]]);
+const outdoorMealTempPoints: [number, number][] = [[0, 0], [10, 3], [15, 8], [18, 10], [25, 10], [30, 9], [40, 3], [45, 0]];
+const outdoorMealTempScore = piecewise(outdoorMealTempPoints);
+const outdoorBreakfastTempScore = piecewise(outdoorMealTempPoints.map(([x, y]): [number, number] => [x - 2, y]));
 
 export const outdoorBreakfast: Activity = {
   id: "outdoor_breakfast",
@@ -945,7 +948,7 @@ export const outdoorBreakfast: Activity = {
       unit: "°C",
       weight: 4,
       extract: (w) => w.temp_avg,
-      scoreFn: piecewise([[0, 0], [8, 2], [15, 7], [18, 9], [22, 10], [26, 9], [30, 5], [38, 0]]),
+      scoreFn: outdoorBreakfastTempScore,
     },
     {
       id: "clouds",
@@ -988,7 +991,7 @@ export const outdoorLunch: Activity = {
       unit: "°C",
       weight: 4,
       extract: (w) => w.temp_avg,
-      scoreFn: piecewise([[0, 0], [10, 2], [16, 5], [20, 9], [24, 10], [28, 9], [32, 5], [38, 0]]),
+      scoreFn: outdoorMealTempScore,
     },
     {
       id: "clouds",
@@ -1031,7 +1034,7 @@ export const outdoorDinner: Activity = {
       unit: "°C",
       weight: 4,
       extract: (w) => w.temp_avg,
-      scoreFn: piecewise([[0, 0], [10, 2], [15, 5], [20, 9], [24, 10], [28, 8], [32, 4], [40, 0]]),
+      scoreFn: outdoorMealTempScore,
     },
     {
       id: "clouds",
