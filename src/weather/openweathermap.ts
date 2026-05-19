@@ -45,11 +45,27 @@ function isDayHour(hour: number): boolean {
   return hour >= 6 && hour < 21;
 }
 
+// Meal windows, inclusive start, exclusive end (local hours).
+const MEAL_WINDOWS: Record<"breakfast" | "lunch" | "dinner", [number, number]> = {
+  breakfast: [7, 10],
+  lunch: [11, 13],
+  dinner: [17, 21],
+};
+
+/** Whether a 3-hour OWM slot starting at `hour` overlaps a [start, end) window. */
+function slotOverlapsWindow(hour: number, start: number, end: number): boolean {
+  return hour < end && hour + 3 > start;
+}
+
 function matchesTimes(hour: number, times?: Set<TimeOfDay>): boolean {
   if (!times || times.size === 0) return true; // no filter = all hours
   for (const t of times) {
     if (t === "nighttime" && isNightHour(hour)) return true;
     if (t === "daytime" && isDayHour(hour)) return true;
+    if (t === "breakfast" || t === "lunch" || t === "dinner") {
+      const [start, end] = MEAL_WINDOWS[t];
+      if (slotOverlapsWindow(hour, start, end)) return true;
+    }
   }
   return false;
 }

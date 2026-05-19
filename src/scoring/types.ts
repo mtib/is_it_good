@@ -25,7 +25,7 @@ export interface Qualifier {
   scoreFn: ScoreFn;
 }
 
-export type TimeOfDay = "daytime" | "nighttime";
+export type TimeOfDay = "daytime" | "nighttime" | "breakfast" | "lunch" | "dinner";
 
 export interface Activity {
   id: string;

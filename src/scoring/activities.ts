@@ -912,9 +912,145 @@ export const windowCleaning: Activity = {
   ],
 };
 
+const outdoorMealRainScore = piecewise([[0, 10], [0.2, 6], [0.5, 3], [1, 1], [3, 0]]);
+const outdoorMealWindScore = piecewise([[0, 10], [10, 9], [15, 7], [20, 4], [30, 1], [40, 0]]);
+const outdoorMealCloudScore = piecewise([[0, 10], [40, 9], [80, 7], [100, 6]]);
+
+export const outdoorBreakfast: Activity = {
+  id: "outdoor_breakfast",
+  name: "Outdoor Breakfast",
+  times: new Set(["breakfast"]),
+  qualifiers: [
+    {
+      id: "rain",
+      name: "Precipitation",
+      unit: "mm",
+      weight: 10,
+      combine: "low-pass",
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: outdoorMealRainScore,
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 6,
+      combine: "low-pass",
+      extract: (w) => w.wind_speed,
+      scoreFn: outdoorMealWindScore,
+    },
+    {
+      id: "temperature",
+      name: "Temperature",
+      unit: "°C",
+      weight: 4,
+      extract: (w) => w.temp_avg,
+      scoreFn: piecewise([[0, 0], [8, 2], [15, 7], [18, 9], [22, 10], [26, 9], [30, 5], [38, 0]]),
+    },
+    {
+      id: "clouds",
+      name: "Cloud Cover",
+      unit: "%",
+      weight: 0.5,
+      extract: (w) => w.cloud_cover,
+      scoreFn: outdoorMealCloudScore,
+    },
+    aqiOutdoorQualifier,
+  ],
+};
+
+export const outdoorLunch: Activity = {
+  id: "outdoor_lunch",
+  name: "Outdoor Lunch",
+  times: new Set(["lunch"]),
+  qualifiers: [
+    {
+      id: "rain",
+      name: "Precipitation",
+      unit: "mm",
+      weight: 10,
+      combine: "low-pass",
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: outdoorMealRainScore,
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 6,
+      combine: "low-pass",
+      extract: (w) => w.wind_speed,
+      scoreFn: outdoorMealWindScore,
+    },
+    {
+      id: "temperature",
+      name: "Temperature",
+      unit: "°C",
+      weight: 4,
+      extract: (w) => w.temp_avg,
+      scoreFn: piecewise([[0, 0], [10, 2], [16, 5], [20, 9], [24, 10], [28, 9], [32, 5], [38, 0]]),
+    },
+    {
+      id: "clouds",
+      name: "Cloud Cover",
+      unit: "%",
+      weight: 0.5,
+      extract: (w) => w.cloud_cover,
+      scoreFn: outdoorMealCloudScore,
+    },
+    aqiOutdoorQualifier,
+  ],
+};
+
+export const outdoorDinner: Activity = {
+  id: "outdoor_dinner",
+  name: "Outdoor Dinner",
+  times: new Set(["dinner"]),
+  qualifiers: [
+    {
+      id: "rain",
+      name: "Precipitation",
+      unit: "mm",
+      weight: 10,
+      combine: "low-pass",
+      extract: (w) => w.rain_mm + w.snow_mm,
+      scoreFn: outdoorMealRainScore,
+    },
+    {
+      id: "wind",
+      name: "Wind",
+      unit: "km/h",
+      weight: 6,
+      combine: "low-pass",
+      extract: (w) => w.wind_speed,
+      scoreFn: outdoorMealWindScore,
+    },
+    {
+      id: "temperature",
+      name: "Temperature",
+      unit: "°C",
+      weight: 4,
+      extract: (w) => w.temp_avg,
+      scoreFn: piecewise([[0, 0], [10, 2], [15, 5], [20, 9], [24, 10], [28, 8], [32, 4], [40, 0]]),
+    },
+    {
+      id: "clouds",
+      name: "Cloud Cover",
+      unit: "%",
+      weight: 0.5,
+      extract: (w) => w.cloud_cover,
+      scoreFn: outdoorMealCloudScore,
+    },
+    aqiOutdoorQualifier,
+  ],
+};
+
 export const activities: Record<string, Activity> = {
   biking, drone, running, swimming, swimming_sport: swimmingSport,
   stargazing, aurora, hide_and_seek: hideAndSeek, gaming, lueften,
   grilling, picnic, skiing, kite_flying: kiteFlying, baking,
   laundry, car_wash: carWash, window_cleaning: windowCleaning,
+  outdoor_breakfast: outdoorBreakfast,
+  outdoor_lunch: outdoorLunch,
+  outdoor_dinner: outdoorDinner,
 };
