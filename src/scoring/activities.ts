@@ -116,7 +116,7 @@ export const biking: Activity = {
   ],
 };
 
-const droneWindScore = piecewise([[0, 10], [6, 10], [12, 7], [20, 3], [30, 0]]);
+const droneWindScore = piecewise([[0, 10], [8, 10], [16, 7], [25, 3], [38, 0]]);
 const droneRainScore = piecewise([[0, 10], [0.5, 0]]);
 
 export const drone: Activity = {
