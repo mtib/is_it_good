@@ -116,7 +116,7 @@ export const biking: Activity = {
   ],
 };
 
-const droneWindScore = piecewise([[0, 10], [15, 10], [25, 9], [36, 5], [45, 0]]);
+const droneWindScore = piecewise([[0, 10], [15, 10], [25, 8], [36, 5], [45, 0]]);
 const droneRainScore = piecewise([[0, 10], [0.5, 0]]);
 
 export const drone: Activity = {
@@ -162,9 +162,9 @@ export const drone: Activity = {
       id: "clouds",
       name: "Cloud Cover",
       unit: "%",
-      weight: 1,
+      weight: 1.5,
       extract: (w) => w.cloud_cover,
-      scoreFn: piecewise([[0, 10], [50, 8], [80, 5], [100, 3]]),
+      scoreFn: piecewise([[0, 10], [50, 7], [80, 4], [100, 2]]),
     },
     aqiOutdoorQualifier,
     uvQualifier,
