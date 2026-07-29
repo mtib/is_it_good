@@ -116,8 +116,7 @@ export const biking: Activity = {
   ],
 };
 
-/** Anchored on m/s thresholds: 10 up to 8, 9 at 10, 8 at 12, 0 at 20. */
-const droneWindScore = piecewise([[0, 10], [28.8, 10], [36, 9], [43.2, 8], [72, 0]]);
+const droneWindScore = piecewise([[0, 10], [15, 10], [25, 9], [36, 5], [45, 0]]);
 const droneRainScore = piecewise([[0, 10], [0.5, 0]]);
 
 export const drone: Activity = {
