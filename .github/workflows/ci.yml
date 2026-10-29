@@ -30,3 +30,11 @@ jobs:
 
       - name: Build frontend
         run: cd frontend && bunx vite build
+
+      # production runs the AOT binary (see Dockerfile): compile it with canary Bun, whose build also type checks
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: canary
+
+      - name: Compile backend (AOT)
+        run: bun build --compile --aot src/index.ts --outfile "$RUNNER_TEMP/is-it-good"
