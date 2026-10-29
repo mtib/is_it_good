@@ -18,7 +18,8 @@ getDb();
 // Clean expired cache every hour
 setInterval(cleanExpiredCache, 3600_000);
 
-const FRONTEND_DIR = join(import.meta.dir, "../frontend/dist");
+// import.meta.dir is virtual in an AOT binary, so the image sets FRONTEND_DIR
+const FRONTEND_DIR = process.env.FRONTEND_DIR ?? join(import.meta.dir, "../frontend/dist");
 const hasFrontend = existsSync(FRONTEND_DIR);
 
 const STATIC_MAX_AGE = 86400; // 24 hours
