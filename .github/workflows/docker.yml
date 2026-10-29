@@ -53,4 +53,21 @@ jobs:
           echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H mtib.dev >> ~/.ssh/known_hosts
-          ssh -o StrictHostKeyChecking=no root@mtib.dev "cd containers && docker compose up -d is-it-good --pull always"
+          # ServerAlive + the remote script ignoring SIGHUP: a dropped session must not stop the swap halfway. The old image goes only once
+          # the new container answers (plain rmi/prune: an image something still uses stays).
+          ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=10 root@mtib.dev 'bash -s' <<'REMOTE'
+          trap '' HUP PIPE
+          set -euo pipefail
+          cd containers
+          old=$(docker inspect -f '{{.Image}}' containers-is-it-good-1 2>/dev/null || true)
+          docker compose up -d is-it-good --pull always
+          ok=0
+          for i in $(seq 1 30); do
+            curl -fsS -o /dev/null --resolve good.mtib.dev:443:127.0.0.1 -k https://good.mtib.dev/ && { ok=1; break; }
+            sleep 2
+          done
+          [ "$ok" = 1 ] || { echo "deploy failed: is-it-good is not answering; the previous image $old is still on the host" >&2; exit 1; }
+          new=$(docker inspect -f '{{.Image}}' containers-is-it-good-1)
+          if [ -n "$old" ] && [ "$old" != "$new" ]; then docker rmi "$old" 2>&1 | tail -1 || true; fi
+          docker image prune -f 2>&1 | tail -1 || true
+          REMOTE
